@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#050505">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Quote Price Analysis | Alert Construction</title>
+  <style>
+    :root{--bg:#050505;--panel:#111;--panel2:#181818;--input:#202020;--line:#303030;--text:#f7f7f7;--muted:#aaa;--yellow:#f5b400;--green:#35d07f;--red:#ff6969;--blue:#63adff;--orange:#ffad45;--radius:22px;--shadow:0 22px 58px rgba(0,0,0,.38)}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.45}
+    body{min-height:100vh}button,input,select{font:inherit}button{touch-action:manipulation}
+    .app{width:min(1240px,100%);margin:auto;padding:18px 18px 56px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:12px}
+    .back{color:var(--muted);text-decoration:none;font-size:13px;font-weight:800}.brand{display:flex;align-items:center;gap:9px;font-weight:900}.logo{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--yellow);color:#050505}.brand span{color:var(--yellow)}
+    .hero,.panel,.verdict,.items-panel{border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(145deg,#151515,#0c0c0c);box-shadow:var(--shadow)}
+    .hero{padding:26px;margin-bottom:18px}.eyebrow{color:var(--yellow);font-weight:900;letter-spacing:.14em;text-transform:uppercase;font-size:12px}.hero h1{font-size:clamp(30px,5vw,54px);line-height:1.02;letter-spacing:-.055em;margin:7px 0 10px}.hero p{margin:0;color:var(--muted);max-width:780px;font-size:16px}
+    .setup{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:18px}.panel{padding:21px;margin-bottom:18px}.panel h2{font-size:21px;letter-spacing:-.025em;margin:0 0 4px}.lead{color:var(--muted);font-size:13px;margin:0 0 16px}
+    .trade-options{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.trade{min-height:54px;border:1px solid var(--line);border-radius:14px;background:var(--input);color:var(--text);font-weight:850;cursor:pointer}.trade.active{background:var(--yellow);border-color:var(--yellow);color:#050505}
+    .dropzone{position:relative;display:flex;align-items:center;gap:14px;min-height:145px;padding:22px;border:1.5px dashed #555;border-radius:18px;background:#0b0b0b;cursor:pointer;transition:.2s}.dropzone.drag{border-color:var(--yellow);background:rgba(245,180,0,.06)}.dropzone.has-file{border-style:solid;border-color:rgba(245,180,0,.62)}.dropzone input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}.file-icon{display:grid;place-items:center;width:52px;height:52px;border-radius:16px;background:rgba(245,180,0,.12);color:var(--yellow);font-size:28px;font-weight:300;flex:none}.file-copy{min-width:0}.file-copy strong,.file-copy small{display:block}.file-copy strong{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.file-copy small{color:var(--muted);margin-top:4px}.remove{position:relative;z-index:2;margin-top:10px;border:0;background:transparent;color:#ff8b8b;font-weight:800;cursor:pointer}
+    .analyse{width:100%;min-height:58px;border:0;border-radius:16px;background:var(--yellow);color:#050505;font-size:17px;font-weight:950;cursor:pointer}.analyse:disabled{opacity:.45;cursor:not-allowed}.small-note{color:#777;font-size:11px;line-height:1.5;margin:10px 2px 0}
+    .progress{display:none;padding:20px;border:1px solid rgba(245,180,0,.35);border-radius:18px;background:rgba(245,180,0,.055);margin-bottom:18px}.progress.show{display:block}.progress-head{display:flex;justify-content:space-between;gap:12px}.progress-head strong{color:var(--yellow)}.progress-head span{color:var(--muted);font-variant-numeric:tabular-nums}.bar{height:8px;background:#242424;border-radius:99px;overflow:hidden;margin:13px 0 11px}.bar i{display:block;width:20%;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--yellow),#ffd66d);transition:width .5s ease}.stage{color:#d7d7d7;font-size:13px}.progress-steps{display:flex;gap:8px;margin-top:13px;flex-wrap:wrap}.progress-steps span{padding:6px 9px;border-radius:99px;background:#222;color:#858585;font-size:11px}.progress-steps span.done{color:#050505;background:var(--yellow)}
+    .results{display:none}.results.show{display:block}.verdict{padding:23px;margin-bottom:18px;border-width:2px}.verdict.expensive{border-color:var(--red)}.verdict.cheap{border-color:var(--green)}.verdict.fair{border-color:var(--blue)}.verdict.mixed,.verdict.needs_review{border-color:var(--orange)}
+    .verdict-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}.verdict h2{font-size:clamp(25px,4vw,38px);line-height:1.08;letter-spacing:-.04em;margin:0}.verdict p{color:#c8c8c8;margin:9px 0 0;max-width:760px}.badge{flex:none;padding:8px 12px;border-radius:99px;font-size:12px;font-weight:950;letter-spacing:.04em}.expensive .badge{background:rgba(255,105,105,.15);color:var(--red)}.cheap .badge{background:rgba(53,208,127,.15);color:var(--green)}.fair .badge{background:rgba(99,173,255,.15);color:var(--blue)}.mixed .badge,.needs_review .badge{background:rgba(255,173,69,.15);color:var(--orange)}
+    .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-top:20px}.metric{padding:15px;border-radius:15px;background:#181818;border:1px solid #282828}.metric span{display:block;color:var(--muted);font-size:11px}.metric strong{display:block;font-size:clamp(19px,3vw,27px);margin-top:4px;letter-spacing:-.03em}
+    .status-counts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}.status-count{display:flex;align-items:center;justify-content:space-between;padding:11px 13px;border-radius:13px;background:#161616;color:var(--muted);font-size:12px}.status-count strong{font-size:18px}.status-count.exp strong{color:var(--red)}.status-count.low strong{color:var(--green)}.status-count.ok strong{color:var(--blue)}.status-count.unmatched strong{color:var(--orange)}
+    .items-panel{padding:20px;margin-bottom:18px}.items-head{display:flex;align-items:flex-end;justify-content:space-between;gap:15px;margin-bottom:14px}.items-head h2{margin:0;font-size:22px}.items-head p{color:var(--muted);font-size:12px;margin:4px 0 0}.threshold{color:#d1b95f;font-size:12px;text-align:right}
+    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:16px}.item-table{width:100%;border-collapse:collapse;min-width:1050px}.item-table th{position:sticky;top:0;background:#1a1a1a;color:var(--muted);font-size:11px;text-align:left;padding:11px 10px;z-index:1}.item-table td{padding:11px 10px;border-top:1px solid #292929;vertical-align:middle;font-size:13px}.item-table input,.item-table select{width:100%;min-height:42px;padding:8px 9px;border:1px solid var(--line);border-radius:10px;background:var(--input);color:var(--text);outline:none}.item-table input:focus,.item-table select:focus{border-color:var(--yellow)}.quoted-name{font-weight:800;min-width:175px}.quoted-name small{display:block;color:var(--muted);font-weight:500;margin-top:3px;max-width:250px}.money-cell{white-space:nowrap;font-weight:800}.difference.positive{color:var(--red)}.difference.negative{color:var(--green)}.line-status{display:inline-flex;padding:6px 8px;border-radius:99px;font-size:10px;font-weight:950;white-space:nowrap}.line-status.expensive{background:rgba(255,105,105,.13);color:var(--red)}.line-status.cheap{background:rgba(53,208,127,.13);color:var(--green)}.line-status.fair{background:rgba(99,173,255,.13);color:var(--blue)}.line-status.unmatched{background:rgba(255,173,69,.13);color:var(--orange)}
+    .note-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.note-card{padding:18px;border:1px solid var(--line);border-radius:18px;background:var(--panel);margin-bottom:18px}.note-card h3{margin:0 0 9px;font-size:17px}.note-card ul{margin:0;padding-left:20px;color:#c9c9c9;font-size:13px}.note-card li+li{margin-top:6px}.market{white-space:pre-wrap;color:#c9c9c9;font-size:13px}.source-list{margin-top:12px}.source-list a{display:block;color:#e7c45c;text-decoration:none;font-size:12px;margin-top:5px;overflow-wrap:anywhere}
+    .actions{display:flex;gap:10px;justify-content:flex-end;margin-top:2px}.actions button{min-height:48px;padding:0 17px;border-radius:14px;border:1px solid var(--line);background:#242424;color:var(--text);font-weight:850;cursor:pointer}.actions .primary{background:var(--yellow);border-color:var(--yellow);color:#050505}
+    .error{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:30;width:min(620px,calc(100% - 28px));padding:14px 16px;border:1px solid rgba(255,105,105,.5);border-radius:14px;background:#2b1414;color:#ffd2d2;box-shadow:var(--shadow)}
+    @media(max-width:900px){.setup{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}.note-grid{grid-template-columns:1fr}.items-panel{padding:15px}}
+    @media(max-width:620px){.app{padding:10px 10px 40px}.brand>span{display:none}.hero,.panel,.verdict,.items-panel{border-radius:18px}.hero{padding:20px}.trade-options{grid-template-columns:1fr}.verdict-top{display:block}.badge{display:inline-flex;margin-top:12px}.metrics,.status-counts{grid-template-columns:1fr 1fr}.items-head{display:block}.threshold{text-align:left;margin-top:6px}.actions{display:grid;grid-template-columns:1fr 1fr}.actions button{width:100%}}
+    @media print{body{background:#fff;color:#000}.app{width:100%;padding:0}.topbar,.hero,.setup,.progress,.actions{display:none!important}.results{display:block!important}.verdict,.items-panel,.note-card{background:#fff;box-shadow:none;color:#000;border-color:#bbb}.metric,.status-count{background:#f5f5f5;color:#222}.item-table th{position:static;background:#eee;color:#222}.item-table td{color:#000}.item-table input,.item-table select{border:0;background:transparent;color:#000;padding:0}.lead,.verdict p,.items-head p,.note-card ul,.market{color:#333}.table-wrap{overflow:visible}.item-table{min-width:0;font-size:10px}}
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar"><a class="back" href="../index.html">← Dashboard</a><div class="brand"><div class="logo">AC</div><span>Quote Price Analysis</span></div></header>
+    <section class="hero"><div class="eyebrow">Alert Construction Price Check</div><h1>Check the quote,<br>item by item.</h1><p>Upload the tradie's quote. Every priced line is matched against the current AC catalogue and reviewed separately, so one expensive item cannot be hidden by another cheap item.</p></section>
+
+    <section class="setup">
+      <div>
+        <div class="panel">
+          <h2>1. Select the trade</h2><p class="lead">The matching AC price catalogue will be locked for this review.</p>
+          <div class="trade-options" role="radiogroup" aria-label="Select trade">
+            <button class="trade active" data-trade="electrical" type="button">⚡ Electrical</button>
+            <button class="trade" data-trade="plumbing" type="button">◉ Plumbing</button>
+            <button class="trade" data-trade="cladding" type="button">▧ Cladding</button>
+          </div>
+        </div>
+        <div class="panel">
+          <h2>2. Upload the quote</h2><p class="lead">PDF, scanned image, Word, TXT or CSV · maximum 15 MB.</p>
+          <label class="dropzone" id="dropzone"><input id="quoteFile" type="file" accept=".pdf,.doc,.docx,.txt,.csv,image/png,image/jpeg,image/webp"><span class="file-icon">＋</span><span class="file-copy"><strong id="fileTitle">Choose the tradie's quote</strong><small id="fileMeta">Tap here or drag the file into this box</small></span></label>
+          <button class="remove" id="removeFile" type="button" hidden>Remove file</button>
+        </div>
+      </div>
+      <aside>
+        <div class="panel">
+          <h2>3. Run the price check</h2><p class="lead">The quote is read in full and matched line by line to the selected Alert Construction catalogue.</p>
+          <button class="analyse" id="analyseBtn" type="button" disabled>Analyse Quote</button>
+          <p class="small-note">A detailed quote may take one or two minutes. The result will not rely on the overall total alone. You can correct every extracted quantity, amount and catalogue match before using it.</p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="progress" id="progress" aria-live="polite">
+      <div class="progress-head"><strong>Reviewing the quote</strong><span id="elapsed">0:00</span></div><div class="bar"><i id="progressBar"></i></div><div class="stage" id="progressStage">Preparing the file…</div>
+      <div class="progress-steps"><span data-step="read">Read all pages</span><span data-step="extract">Extract line items</span><span data-step="match">Match AC prices</span><span data-step="check">Cross-check pricing</span><span data-step="result">Prepare result</span></div>
+    </section>
+
+    <section class="results" id="results">
+      <div class="verdict" id="verdict"><div class="verdict-top"><div><h2 id="verdictTitle"></h2><p id="verdictSummary"></p></div><span class="badge" id="verdictBadge"></span></div>
+        <div class="metrics"><div class="metric"><span>Quoted total ex GST</span><strong id="quotedTotal">$0.00</strong></div><div class="metric"><span>Comparable AC total ex GST</span><strong id="referenceTotal">$0.00</strong></div><div class="metric"><span>Comparable difference</span><strong id="comparableDifference">$0.00</strong></div><div class="metric"><span>Price coverage</span><strong id="coverage">0%</strong></div></div>
+      </div>
+
+      <div class="status-counts"><div class="status-count exp"><span>Expensive items</span><strong id="expensiveCount">0</strong></div><div class="status-count low"><span>Cheap items</span><strong id="cheapCount">0</strong></div><div class="status-count ok"><span>Fair items</span><strong id="fairCount">0</strong></div><div class="status-count unmatched"><span>Need review</span><strong id="unmatchedCount">0</strong></div></div>
+
+      <section class="items-panel"><div class="items-head"><div><h2>Item-by-item comparison</h2><p>Correct any extracted value below and the result will recalculate immediately.</p></div><div class="threshold">Expensive or cheap only when one line differs by more than $100.</div></div>
+        <div class="table-wrap"><table class="item-table"><thead><tr><th>Quoted item</th><th>Matched AC item</th><th>Qty</th><th>Quoted line ex GST</th><th>AC line ex GST</th><th>Difference</th><th>Status</th></tr></thead><tbody id="itemBody"></tbody></table></div>
+      </section>
+
+      <div class="note-grid">
+        <section class="note-card"><h3>Scope and checking notes</h3><ul id="warningList"></ul></section>
+        <section class="note-card"><h3>Comparison rule</h3><div class="market" id="marketSummary"></div><div class="source-list" id="sourceList"></div></section>
+      </div>
+      <div class="actions"><button id="resetBtn" type="button">Check another quote</button><button class="primary" id="printBtn" type="button">Print / Save PDF</button></div>
+    </section>
+    <div class="error" id="errorBox" hidden></div>
+  </main>
+  <script src="../plan-ai/config.js"></script>
+  <script src="./app.js"></script>
+  <script src="../shared/project-store.js"></script>
+  <script src="../shared/project-bridge.js"></script>
+</body>
+</html>

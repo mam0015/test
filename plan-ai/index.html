@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#050505">
+  <title>AI Plan Estimator | Alert Construction</title>
+  <link rel="icon" href="../assets/app-icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <a href="../index.html">← Dashboard</a>
+      <div class="brand">AC <span>AI Plan Estimator</span></div>
+      <span class="beta">BETA</span>
+    </header>
+
+    <section class="intro">
+      <div class="eyebrow">Alert Construction Intelligence</div>
+      <h1>Ask your plan.<br><span>Estimate the trade.</span></h1>
+      <p>Upload a drawing, select the trade, then choose a fast vision pass or a deeper smart review. Both methods read legends and plan symbols, then transfer editable quantities into your existing Alert Construction calculators.</p>
+    </section>
+
+    <section class="chat-card">
+      <div class="trade-bar">
+        <div><strong>Select Trade</strong><small>The selected price catalogue will be used.</small></div>
+        <div class="trade-options" role="radiogroup" aria-label="Select trade">
+          <button class="trade active" data-trade="electrical" type="button"><span>⚡</span>Electrical</button>
+          <button class="trade" data-trade="plumbing" type="button"><span>◉</span>Plumbing</button>
+          <button class="trade" data-trade="cladding" type="button"><span>▧</span>Cladding</button>
+        </div>
+      </div>
+
+      <div class="method-bar">
+        <div class="method-heading"><strong>Choose Analysis Method</strong><small>You can change this before every scan.</small></div>
+        <div class="method-options" role="radiogroup" aria-label="Choose analysis method">
+          <button class="method active" data-method="fast" type="button" role="radio" aria-checked="true">
+            <span class="method-icon">⚡</span>
+            <span><strong>Fast Vision</strong><small>One AI pass • quicker</small></span>
+            <em>Quicker / more risk</em>
+          </button>
+          <button class="method" data-method="smart" type="button" role="radio" aria-checked="false">
+            <span class="method-icon">✦</span>
+            <span><strong>Smart Review</strong><small>Deeper symbol review</small></span>
+            <em>Slower / less risk</em>
+          </button>
+        </div>
+        <div class="method-note" id="methodNote">Fast Vision uses one AI vision pass to read legends and count visible symbols. It is quicker, but every quantity still needs checking.</div>
+      </div>
+
+      <div class="messages" id="messages" aria-live="polite">
+        <div class="message-row assistant">
+          <div class="avatar">AI</div>
+          <div class="bubble">Upload the plan below, choose Electrical, Plumbing or Cladding, then select Fast Vision or Smart Review. The AI reads legends and symbols, and every detected quantity remains editable before it is transferred to the calculator.</div>
+        </div>
+      </div>
+
+      <form class="composer" id="chatForm">
+        <textarea id="chatInput" rows="2" placeholder="e.g. Calculate the electrical work from the plan below" required></textarea>
+        <button class="send" id="sendBtn" type="submit" aria-label="Send">➜</button>
+      </form>
+    </section>
+
+    <section class="file-card">
+      <div class="file-head"><div><strong>Plan File</strong><small>PDF, Word, PNG, JPG, WEBP, TXT or CSV • Maximum 15 MB</small></div><button class="remove-file" id="removeFileBtn" type="button" hidden>Remove</button></div>
+      <label class="dropzone" id="dropzone">
+        <input id="planFile" type="file" accept=".pdf,.doc,.docx,.txt,.csv,image/png,image/jpeg,image/webp">
+        <span class="file-icon">＋</span>
+        <span class="file-copy"><strong id="fileTitle">Upload house plan</strong><small id="fileMeta">Choose a file or drag it here</small></span>
+      </label>
+    </section>
+
+    <div class="notice"><strong>Preliminary estimate only.</strong> Every result must be checked against the plan and confirmed by the relevant licensed trade or Builder before it is used as a quote.</div>
+    <div class="error-box" id="errorBox" hidden></div>
+  </main>
+  <script src="./config.js"></script>
+  <script src="./app.js"></script>
+  <script src="../shared/project-store.js"></script>
+  <script src="../shared/project-bridge.js"></script>
+</body>
+</html>

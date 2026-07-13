@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="format-detection" content="telephone=no" />
+  <title>AC Plumbing Quote Calculator Pro - 20% Profit</title>
+  <style>
+    :root{
+      --bg:#050505; --panel:#111111; --panel2:#171717; --panel3:#202020;
+      --line:#2b2b2b; --text:#f5f5f5; --muted:#b7b7b7; --soft:#777;
+      --accent:#f5b400; --accent2:#ffd36a; --danger:#ff6868; --success:#60d394;
+      --input:#202020; --white:#ffffff; --shadow:0 18px 45px rgba(0,0,0,.35);
+      --radius:22px;
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.35;min-height:100%;}
+    body{padding:18px;padding-bottom:40px;}
+    .app{width:min(1180px,100%);margin:0 auto;}
+    .hero{background:radial-gradient(circle at top right,rgba(245,180,0,.12),transparent 35%),linear-gradient(135deg,#0d0d0d,#151515);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);margin-bottom:18px;}
+    .brand{display:flex;gap:14px;align-items:center;margin-bottom:18px;}
+    .logo{width:46px;height:46px;border-radius:14px;background:var(--accent);color:#000;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;letter-spacing:-1px;flex-shrink:0;}
+    h1{margin:0;font-size:clamp(22px,4vw,42px);letter-spacing:-.04em;}
+    .subtitle{margin:7px 0 0;color:var(--muted);font-size:15px;}
+    .grid-top{display:grid;grid-template-columns:1fr 1fr 210px 170px;gap:14px;}
+    label{display:block;color:var(--muted);font-size:14px;margin:0 0 8px;}
+    input,select,textarea{width:100%;border:1px solid var(--line);background:var(--input);color:var(--text);border-radius:14px;padding:15px 14px;font-size:16px;outline:none;min-height:52px;}
+    input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(245,180,0,.15);}
+    input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+    input[type=number]{-moz-appearance:textfield;appearance:textfield;}
+    .summary{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;margin-bottom:18px;}
+    .total-card,.actions,.note,.custom-card,.filters{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;}
+    .total-box{border:2px solid var(--accent);border-radius:18px;padding:18px;min-height:122px;display:flex;flex-direction:column;justify-content:center;}
+    .total-title{color:var(--muted);font-size:15px;margin-bottom:6px;}
+    .total{font-size:clamp(32px,6vw,54px);font-weight:900;color:var(--accent);letter-spacing:-.04em;}
+    .small-total{margin-top:6px;color:var(--muted);font-size:13px;}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px;}
+    .stat{background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:12px;}
+    .stat b{display:block;font-size:18px;color:var(--accent);}.stat span{font-size:12px;color:var(--muted)}
+    .actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start;}
+    button{border:0;border-radius:16px;padding:15px 18px;min-height:52px;font-size:16px;font-weight:800;cursor:pointer;color:#000;background:var(--accent);-webkit-appearance:none;touch-action:manipulation;}
+    button.secondary{background:#2a2a2a;color:var(--white);} button.danger{background:#3a1f1f;color:#fff;border:1px solid #633}
+    .note{color:var(--muted);font-size:14px;margin-bottom:18px;}
+    .warning{color:var(--accent2);font-weight:700;}
+    .filters{display:grid;grid-template-columns:1.4fr .8fr .8fr;gap:12px;margin-bottom:16px;}
+    .sections{display:grid;grid-template-columns:1fr;gap:16px;}
+    details.section{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+    summary{list-style:none;cursor:pointer;padding:18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;}
+    summary::-webkit-details-marker{display:none}
+    .section-title h2{margin:0;font-size:22px;letter-spacing:-.03em;}.section-title p{margin:5px 0 0;color:var(--muted);font-size:13px;}
+    .chev{color:var(--accent);font-size:22px;font-weight:900;transition:.2s transform;} details[open] .chev{transform:rotate(90deg)}
+    .item{display:grid;grid-template-columns:1.45fr 145px 150px 120px;gap:12px;align-items:center;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.06);}
+    .item:last-child{border-bottom:0;}.item-name{font-size:16px;font-weight:700;}.item-name strong{color:var(--accent);font-weight:900;}.item-desc{font-size:12px;color:var(--muted);margin-top:3px;}.tag{display:inline-block;color:#000;background:var(--accent2);border-radius:999px;padding:2px 8px;font-size:11px;font-weight:900;margin-left:6px;}
+    .rate,.line-total{text-align:right;font-weight:800;white-space:nowrap;}.rate{color:var(--muted);}.line-total{color:var(--text);}
+    .qty{display:flex;align-items:center;gap:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--input);min-height:48px;}
+    .qty-btn{background:transparent;color:var(--accent);border:none;border-radius:0;font-size:22px;font-weight:900;min-height:48px;width:44px;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;touch-action:manipulation;}
+    .qty-btn:active{background:rgba(245,180,0,.15)} .qty input.qtyInput{border:none;background:transparent;text-align:center;font-weight:800;font-size:17px;padding:0;min-height:48px;border-radius:0;flex:1;width:0;color:var(--text);}.qty input.qtyInput:focus{box-shadow:none;border-color:transparent;}
+    .builder-only{display:none;} body.builder-mode .builder-only{display:block;} body.customer-mode .rate,body.customer-mode .line-total,body.customer-mode .builder-only-inline{display:none;} body.customer-mode .item{grid-template-columns:1fr 160px;}
+    .custom-card{margin:18px 0;}.custom-grid{display:grid;grid-template-columns:1.2fr 160px 160px;gap:12px;align-items:end;}.custom-list{margin-top:12px;border-top:1px solid var(--line)}
+    .footer-space{height:30px}.hide{display:none!important}.empty{padding:16px 18px;color:var(--muted);font-size:14px;}
+    @media (max-width:900px){body{padding:10px;padding-bottom:30px}.hero,.total-card,.actions,.note,.section,.custom-card,.filters{border-radius:18px}.grid-top,.summary,.filters,.custom-grid{grid-template-columns:1fr;gap:10px}.actions{grid-template-columns:1fr 1fr}button{width:100%;padding:14px 10px;font-size:15px}summary{padding:14px}.item,body.builder-mode .item,body.customer-mode .item{display:flex;flex-direction:column;gap:10px;padding:14px}.item-row-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;width:100%}.item-row-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%}.rate,.line-total,body.customer-mode .line-total,body.builder-mode .line-total{display:block!important;text-align:right;white-space:nowrap;font-weight:800}.rate{color:var(--muted);font-size:13px}.line-total{color:var(--accent);font-size:15px}body.customer-mode .rate,body.customer-mode .builder-only-inline{display:none!important}.item-name{font-size:15px;flex:1}.qty{min-width:130px;max-width:165px}.qty-btn{width:40px;font-size:20px}.stats{grid-template-columns:1fr 1fr 1fr}}
+    @media print{body{background:#fff;color:#000;padding:0}.app{width:100%}.hero,.total-card,.note,.section,.custom-card,.filters{box-shadow:none;border-color:#ddd;background:#fff;color:#000;break-inside:avoid}.actions,.filters,.custom-card{display:none}input,select{border:1px solid #ddd;background:#fff;color:#000}.logo,button{background:#000;color:#fff}.total{color:#000}.total-box{border-color:#000}summary{border-bottom-color:#ddd}.item{border-bottom-color:#eee}.item-name strong{color:#000}.subtitle,.item-desc,.section-title p,.total-title,.small-total,label,.note{color:#444}.qty-btn{display:none}.chev{display:none}details.section{display:block}details.section:not([open])>*{display:block}}
+  </style>
+</head>
+<body class="customer-mode">
+  <main class="app">
+    <a href="../index.html" style="display:inline-flex;align-items:center;gap:6px;color:#b7b7b7;font-size:13px;font-weight:700;text-decoration:none;margin-bottom:10px">← Back to dashboard</a>
+    <section class="hero">
+      <div class="brand"><div class="logo">AC</div><div><h1>Plumbing Quote Calculator Pro</h1><p class="subtitle">Built from Odds On Plumbing invoices: rough-in, fit-off, gas, drainage and extras. Customer mode adds the selected profit margin, then GST, while hiding internal pricing.</p></div></div>
+      <div class="grid-top">
+        <div><label for="project">Project / Address</label><input id="project" type="text" placeholder="e.g. Point Cook renovation" autocomplete="off" /></div>
+        <div><label for="customer">Prepared For</label><input id="customer" type="text" placeholder="Customer name" autocomplete="off" /></div>
+        <div><label for="mode">View Mode</label><select id="mode"><option value="customer" selected>Customer Quote</option><option value="builder">Builder Price</option></select></div>
+        <div><label for="profitMargin">Profit Margin %</label><input id="profitMargin" type="number" min="0" step="1" value="20" /></div>
+      </div>
+    </section>
+
+    <section class="summary">
+      <div class="total-card"><div class="total-box"><div class="total-title" id="totalTitle">Customer Quote Total inc GST</div><div class="total" id="grandTotal">$0.00</div><div class="small-total builder-only" id="builderBreakdown">Ex GST: $0.00 | GST: $0.00</div></div><div class="stats"><div class="stat"><b id="itemCount">0</b><span>Selected items</span></div><div class="stat"><b id="qtyCount">0</b><span>Total quantity</span></div><div class="stat"><b id="subTotalMini">$0</b><span>Base ex GST</span></div></div></div>
+      <div class="actions"><button type="button" id="printBtn">Print / Save PDF</button><button type="button" class="secondary" id="clearBtn">Clear Quantities</button><button type="button" class="secondary" id="expandBtn">Open All</button><button type="button" class="danger" id="closeBtn">Close All</button></div>
+    </section>
+
+    <section class="note"><span class="warning">Customer Quote mode:</span> shows only the final customer total inc GST. Builder rates, line totals and hidden margin are not shown. <span class="builder-only"><br><br><span class="warning">Builder Price mode:</span> shows internal ex GST rates, GST and line totals. Rates are based on the supplied invoices where possible, with practical per-fixture rates calculated from the same job totals.</span></section>
+
+    <section class="filters"><div><label for="search">Search item</label><input id="search" type="text" placeholder="Search toilet, shower, gas, kitchen..." /></div><div><label for="stageFilter">Stage</label><select id="stageFilter"><option value="all">All stages</option><option value="rough">Rough In</option><option value="fitoff">Fit Off</option><option value="extras">Extras</option></select></div><div><label for="quickAdd">Quick Add</label><select id="quickAdd"><option value="">Choose common item...</option><option value="rough-bathroom">Bathroom Rough-In Package</option><option value="fit-toilet">Toilet Fit-Off</option><option value="fit-shower">Shower Fit-Off</option><option value="extra-bath-waste">Coloured Bath Waste</option></select></div></section>
+
+    <section class="sections" id="itemsWrap">
+      <details class="section" open data-stage="rough"><summary><div class="section-title"><h2>Rough In Packages</h2><p>Package pricing taken directly from invoice 4990 where the invoice listed separate areas.</p></div><div class="chev">›</div></summary>
+        <div class="item" id="rough-bathroom" data-rate="3200" data-stage="rough"><div class="item-row-top"><div><div class="item-name"><strong>Bathroom Rough-In Package</strong><span class="tag">Invoice</span></div><div class="item-desc">Bath, vanity basin, shower and toilet. Invoice 4990 listed this area at $3,200 ex GST.</div></div><div class="rate builder-only-inline">$3,200 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="numeric" min="0" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="3700" data-stage="rough"><div class="item-row-top"><div><div class="item-name"><strong>Ensuite Rough-In Package</strong><span class="tag">Invoice</span></div><div class="item-desc">Bath, 2 vanity basins, toilet, shower and vent. Invoice 4990 listed this area at $3,700 ex GST.</div></div><div class="rate builder-only-inline">$3,700 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="numeric" min="0" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="2500" data-stage="rough"><div class="item-row-top"><div><div class="item-name"><strong>Ground Floor Bathroom Rough-In</strong><span class="tag">Invoice</span></div><div class="item-desc">Toilet, shower and vanity basin. Invoice 4990 listed this area at $2,500 ex GST.</div></div><div class="rate builder-only-inline">$2,500 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="numeric" min="0" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="800" data-stage="rough"><div class="item-row-top"><div><div class="item-name"><strong>Laundry Rough-In</strong><span class="tag">Invoice</span></div><div class="item-desc">Trough and washing machine rough-in. Invoice 4990 listed this area at $800 ex GST.</div></div><div class="rate builder-only-inline">$800 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="numeric" min="0" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="1100" data-stage="rough"><div class="item-row-top"><div><div class="item-name"><strong>Kitchen Rough-In</strong><span class="tag">Invoice</span></div><div class="item-desc">Sink, dishwasher, fridge water and gas hot plate. Invoice 4990 listed this area at $1,100 ex GST.</div></div><div class="rate builder-only-inline">$1,100 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="numeric" min="0" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="700" data-stage="rough"><div class="item-row-top"><div><div class="item-name"><strong>Retreat Sink Rough-In</strong><span class="tag">Invoice</span></div><div class="item-desc">Sink in retreat area. Invoice 4990 listed this area at $700 ex GST.</div></div><div class="rate builder-only-inline">$700 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="numeric" min="0" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+      </details>
+
+      <details class="section" open data-stage="rough"><summary><div class="section-title"><h2>Rough In Individual Items</h2><p>Useful when the job is smaller than a full package.</p></div><div class="chev">›</div></summary>
+        <div class="item" data-rate="220" data-stage="rough"><div class="item-row-top"><div><div class="item-name"><strong>New Water Point Rough-In</strong></div><div class="item-desc">Hot/cold water point allowance for one fixture.</div></div><div class="rate builder-only-inline">$220 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="numeric" min="0" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="180" data-stage="rough"><div class="item-row-top"><div><div class="item-name"><strong>Waste Point Rough-In</strong></div><div class="item-desc">Waste/drainage point for one fixture.</div></div><div class="rate builder-only-inline">$180 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="numeric" min="0" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="160" data-stage="rough"><div class="item-row-top"><div><div class="item-name"><strong>Wall Mixer Rough-In</strong></div><div class="item-desc">Installation allowance for wall mixer during rough-in.</div></div><div class="rate builder-only-inline">$160 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="numeric" min="0" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="190" data-stage="rough"><div class="item-row-top"><div><div class="item-name"><strong>Smart Toilet Setup</strong></div><div class="item-desc">Set up water correctly for smart toilet. Invoice 4990 included 3x smart toilets in scope.</div></div><div class="rate builder-only-inline">$190 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="numeric" min="0" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="150" data-stage="rough"><div class="item-row-top"><div><div class="item-name"><strong>Rain Shower Nogging</strong></div><div class="item-desc">Nogging out ceiling flush fitting rain shower. Invoice 4990 included 3x rain showers.</div></div><div class="rate builder-only-inline">$150 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="numeric" min="0" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+      </details>
+
+      <details class="section" open data-stage="fitoff"><summary><div class="section-title"><h2>Fit Off Fixtures</h2><p>Final water and waste connections, based around invoice 5055 fit-off scope.</p></div><div class="chev">›</div></summary>
+        <div class="item" id="fit-toilet" data-rate="320" data-stage="fitoff"><div class="item-row-top"><div><div class="item-name"><strong>Toilet Fit-Off</strong></div><div class="item-desc">Fit off toilet with water and waste connection, tested ok.</div></div><div class="rate builder-only-inline">$320 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="numeric" min="0" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="300" data-stage="fitoff"><div class="item-row-top"><div><div class="item-name"><strong>Vanity Basin Fit-Off</strong></div><div class="item-desc">Fit off vanity basin with mixer, water and waste connection.</div></div><div class="rate builder-only-inline">$300 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="numeric" min="0" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" id="fit-shower" data-rate="380" data-stage="fitoff"><div class="item-row-top"><div><div class="item-name"><strong>Shower Fit-Off</strong></div><div class="item-desc">Fit off shower fixtures and test connections.</div></div><div class="rate builder-only-inline">$380 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="numeric" min="0" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="420" data-stage="fitoff"><div class="item-row-top"><div><div class="item-name"><strong>Bath Fit-Off</strong></div><div class="item-desc">Fit off bath, water and waste connection.</div></div><div class="rate builder-only-inline">$420 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="numeric" min="0" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="330" data-stage="fitoff"><div class="item-row-top"><div><div class="item-name"><strong>Kitchen Sink Fit-Off</strong></div><div class="item-desc">Fit off kitchen sink, mixer, water and waste.</div></div><div class="rate builder-only-inline">$330 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="numeric" min="0" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="260" data-stage="fitoff"><div class="item-row-top"><div><div class="item-name"><strong>Laundry Trough Fit-Off</strong></div><div class="item-desc">Fit off laundry trough with water and waste connection.</div></div><div class="rate builder-only-inline">$260 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="numeric" min="0" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="190" data-stage="fitoff"><div class="item-row-top"><div><div class="item-name"><strong>Water to Fridge Fit-Off</strong></div><div class="item-desc">Connect water to fridge.</div></div><div class="rate builder-only-inline">$190 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="numeric" min="0" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="260" data-stage="fitoff"><div class="item-row-top"><div><div class="item-name"><strong>Dishwasher Connection</strong></div><div class="item-desc">Connect dishwasher water and waste.</div></div><div class="rate builder-only-inline">$260 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="numeric" min="0" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+      </details>
+
+      <details class="section" open data-stage="extras"><summary><div class="section-title"><h2>Gas, Drainage & Extras</h2><p>Extra plumbing items and invoice-based extras.</p></div><div class="chev">›</div></summary>
+        <div class="item" data-rate="410" data-stage="extras"><div class="item-row-top"><div><div class="item-name"><strong>Gas Line Alteration</strong><span class="tag">Invoice</span></div><div class="item-desc">First floor alteration and gas point for future hot plate. Invoice 4990 listed $410 ex GST.</div></div><div class="rate builder-only-inline">$410 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="numeric" min="0" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="330" data-stage="extras"><div class="item-row-top"><div><div class="item-name"><strong>Gas Hot Plate Fit-Off</strong></div><div class="item-desc">Connect gas hot plate and test.</div></div><div class="rate builder-only-inline">$330 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="numeric" min="0" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="650" data-stage="extras"><div class="item-row-top"><div><div class="item-name"><strong>Concrete Saw Cut / Jackhammer Allowance</strong></div><div class="item-desc">Allowance for ground floor bathroom concrete slab alterations.</div></div><div class="rate builder-only-inline">$650 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="numeric" min="0" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="480" data-stage="extras"><div class="item-row-top"><div><div class="item-name"><strong>Sanitary Drain Alteration</strong></div><div class="item-desc">Remove/reinstall sanitary drains and alter vent as required.</div></div><div class="rate builder-only-inline">$480 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="numeric" min="0" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" id="extra-bath-waste" data-rate="250" data-stage="extras"><div class="item-row-top"><div><div class="item-name"><strong>Coloured Bath Waste + Flexible Connection</strong><span class="tag">Invoice</span></div><div class="item-desc">Invoice 5056 listed 2x coloured bath wastes with flexible connection at $250 each ex GST.</div></div><div class="rate builder-only-inline">$250 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="numeric" min="0" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="165" data-stage="extras"><div class="item-row-top"><div><div class="item-name"><strong>Call-Out / Minor Plumbing Item</strong></div><div class="item-desc">Small extra or site visit allowance.</div></div><div class="rate builder-only-inline">$165 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="numeric" min="0" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+      </details>
+    </section>
+
+    <section class="custom-card"><h2 style="margin:0 0 10px;letter-spacing:-.03em">Custom Item</h2><div class="custom-grid"><div><label for="customName">Item Name</label><input id="customName" placeholder="e.g. Outdoor tap" /></div><div><label for="customRate">Rate ex GST</label><input id="customRate" type="number" min="0" step="1" placeholder="250" /></div><div><button type="button" id="addCustomBtn">Add Item</button></div></div><div class="custom-list" id="customList"></div></section>
+    <div class="footer-space"></div>
+  </main>
+
+  <script>
+    (function(){
+      'use strict';
+      var GST_RATE = 0.10;
+      function money(value){var n=Number(value||0);return '$'+n.toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2});}
+      function shortMoney(value){var n=Number(value||0);return '$'+n.toLocaleString('en-AU',{maximumFractionDigits:0});}
+      function getQty(input){var value=parseInt(input.value,10); if(isNaN(value)||value<0) return 0; return value;}
+      function rows(){return document.querySelectorAll('.item');}
+      function calculateTotals(){
+        var modeEl=document.getElementById('mode'); var mode=modeEl?modeEl.value:'customer';
+        var profitEl=document.getElementById('profitMargin'); var profitMargin=Math.max(0,Number(profitEl&&profitEl.value?profitEl.value:0));
+        var subtotalExGst=0, selected=0, qtyTotal=0;
+        rows().forEach(function(row){var rate=Number(row.getAttribute('data-rate')||0); var input=row.querySelector('.qtyInput'); var qty=input?getQty(input):0; var line=rate*qty; subtotalExGst+=line; if(qty>0){selected++; qtyTotal+=qty;} var lineBox=row.querySelector('.line-total'); if(lineBox) lineBox.textContent=money(line);});
+        var profitAmount=0; var quoteBaseExGst=subtotalExGst; if(mode==='customer' && subtotalExGst>0){profitAmount=subtotalExGst*(profitMargin/100); quoteBaseExGst=subtotalExGst+profitAmount;}
+        var gst=quoteBaseExGst*GST_RATE; var totalIncGst=quoteBaseExGst+gst;
+        document.getElementById('grandTotal').textContent=money(totalIncGst);
+        document.getElementById('totalTitle').textContent=mode==='customer'?'Customer Quote Total inc GST':'Builder Price Total inc GST';
+        document.getElementById('builderBreakdown').textContent='Base ex GST: '+money(subtotalExGst)+' | Profit: '+money(profitAmount)+' ('+profitMargin+'%) | Quote ex GST: '+money(quoteBaseExGst)+' | GST: '+money(gst);
+        document.getElementById('itemCount').textContent=selected; document.getElementById('qtyCount').textContent=qtyTotal; document.getElementById('subTotalMini').textContent=shortMoney(subtotalExGst);
+        document.body.classList.remove('customer-mode','builder-mode'); document.body.classList.add(mode==='customer'?'customer-mode':'builder-mode');
+      }
+      function clearQuantities(){document.querySelectorAll('.qtyInput').forEach(function(i){i.value='0';}); calculateTotals();}
+      function printPage(){calculateTotals(); setTimeout(function(){window.print();},50);}
+      function applyAiPrefill(){
+        try{var raw=localStorage.getItem('ac_ai_plumbing_prefill_v1');if(!raw)return;var data=JSON.parse(raw);var inputs=document.querySelectorAll('.item .qtyInput');var quantities=data.quantities||[];inputs.forEach(function(input,index){input.value=Math.max(0,parseInt(quantities[index]||0,10)||0);});var project=document.getElementById('project');var customer=document.getElementById('customer');var mode=document.getElementById('mode');if(project&&data.project)project.value=data.project;if(customer&&data.customer)customer.value=data.customer;if(mode&&data.mode)mode.value=data.mode;localStorage.removeItem('ac_ai_plumbing_prefill_v1');}catch(e){}
+      }
+      function filterItems(){
+        var q=(document.getElementById('search').value||'').toLowerCase().trim(); var stage=document.getElementById('stageFilter').value;
+        document.querySelectorAll('details.section').forEach(function(sec){var any=false; var secStage=sec.getAttribute('data-stage'); sec.querySelectorAll('.item').forEach(function(item){var text=item.innerText.toLowerCase(); var itemStage=item.getAttribute('data-stage'); var okText=!q||text.indexOf(q)>-1; var okStage=stage==='all'||itemStage===stage||secStage===stage; var show=okText&&okStage; item.classList.toggle('hide',!show); if(show) any=true;}); sec.classList.toggle('hide',!any); if(q||stage!=='all') sec.open=true;});
+      }
+      function addCustomItem(){
+        var name=(document.getElementById('customName').value||'').trim(); var rate=Number(document.getElementById('customRate').value||0); if(!name||rate<=0){return;}
+        var wrap=document.getElementById('customList'); var div=document.createElement('div'); div.className='item'; div.setAttribute('data-rate',rate); div.setAttribute('data-stage','extras'); div.innerHTML='<div class="item-row-top"><div><div class="item-name"><strong>'+name.replace(/[<>&]/g,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;'}[c];})+'</strong><span class="tag">Custom</span></div><div class="item-desc">Custom plumbing item added manually.</div></div><div class="rate builder-only-inline">'+money(rate).replace('.00','')+' ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="numeric" min="0" value="1"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div>';
+        wrap.appendChild(div); document.getElementById('customName').value=''; document.getElementById('customRate').value=''; attachInputEvents(div); calculateTotals();
+      }
+      function attachInputEvents(scope){(scope||document).querySelectorAll('.qtyInput').forEach(function(inp){inp.addEventListener('input',calculateTotals,false); inp.addEventListener('change',calculateTotals,false); inp.addEventListener('blur',calculateTotals,false);});}
+      function bump(btn){var qtyWrap=btn.closest('.qty'); if(!qtyWrap)return; var inp=qtyWrap.querySelector('.qtyInput'); if(!inp)return; var v=getQty(inp); inp.value=btn.classList.contains('qty-plus')?v+1:Math.max(0,v-1); calculateTotals();}
+      function attachEvents(){
+        attachInputEvents(document);
+        document.addEventListener('click',function(e){var btn=e.target; if(btn.classList&&btn.classList.contains('qty-btn')){bump(btn);}},false);
+        document.addEventListener('touchend',function(e){var btn=e.target; if(btn.classList&&btn.classList.contains('qty-btn')){e.preventDefault(); bump(btn);}},false);
+        ['mode','profitMargin'].forEach(function(id){var el=document.getElementById(id); if(el){el.addEventListener('input',calculateTotals,false); el.addEventListener('change',calculateTotals,false);}});
+        document.getElementById('clearBtn').addEventListener('click',clearQuantities,false); document.getElementById('printBtn').addEventListener('click',printPage,false);
+        document.getElementById('expandBtn').addEventListener('click',function(){document.querySelectorAll('details.section').forEach(function(d){d.open=true;});},false);
+        document.getElementById('closeBtn').addEventListener('click',function(){document.querySelectorAll('details.section').forEach(function(d){d.open=false;});},false);
+        document.getElementById('search').addEventListener('input',filterItems,false); document.getElementById('stageFilter').addEventListener('change',filterItems,false);
+        document.getElementById('quickAdd').addEventListener('change',function(){if(!this.value)return; var target=document.getElementById(this.value); if(target){var inp=target.querySelector('.qtyInput'); inp.value=getQty(inp)+1; target.closest('details').open=true; target.scrollIntoView({behavior:'smooth',block:'center'}); calculateTotals();} this.value='';},false);
+        document.getElementById('addCustomBtn').addEventListener('click',addCustomItem,false);
+      }
+      if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){attachEvents();applyAiPrefill();calculateTotals();},false);}else{attachEvents();applyAiPrefill();calculateTotals();}
+      window.ACPlumbingQuote={calculateTotals:calculateTotals,clearQuantities:clearQuantities,printPage:printPage};
+    })();
+  </script>
+<script>
+window.ACProjectCapture = async function(){
+  var rows=Array.prototype.slice.call(document.querySelectorAll('.sections .item')),quantities=[],selected=[],base=0;
+  rows.forEach(function(row){var qty=Math.max(0,Number((row.querySelector('.qtyInput')||{}).value||0)),rate=Number(row.getAttribute('data-rate')||0),name=((row.querySelector('.item-name strong')||row.querySelector('.item-name')||{}).textContent||'Plumbing item').trim();quantities.push(qty);if(qty>0){selected.push({name:name,quantity:qty,rate:rate,lineTotal:qty*rate});base+=qty*rate;}});
+  var mode=(document.getElementById('mode')||{}).value||'customer',margin=Math.max(0,Number((document.getElementById('profitMargin')||{}).value||20)),project=(document.getElementById('project')||{}).value||'',customer=(document.getElementById('customer')||{}).value||'',builder=base*1.1,customerTotal=base>0?base*(1+margin/100)*1.1:0,total=mode==='builder'?builder:customerTotal;
+  return{module:'plumbing',title:(project?project+' — ':'')+'Plumbing Estimate',summary:selected.length+' selected items • '+total.toLocaleString('en-AU',{style:'currency',currency:'AUD'}),data:{project:project,customer:customer,mode:mode,profitMargin:margin,quantities:quantities,items:selected,builderTotalIncGst:builder,customerTotalIncGst:customerTotal}};
+};
+</script>
+<script src="../shared/project-store.js"></script>
+<script src="../shared/project-bridge.js"></script>
+</body>
+</html>

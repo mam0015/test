@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="format-detection" content="telephone=no" />
+  <title>AC Cladding Quote Calculator Pro - Bell Plaster Prices</title>
+  <style>
+    :root{
+      --bg:#050505; --panel:#111111; --panel2:#171717; --panel3:#202020;
+      --line:#2b2b2b; --text:#f5f5f5; --muted:#b7b7b7; --soft:#777;
+      --accent:#f5b400; --accent2:#ffd36a; --danger:#ff6868; --success:#60d394;
+      --input:#202020; --white:#ffffff; --shadow:0 18px 45px rgba(0,0,0,.35);
+      --radius:22px;
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.35;min-height:100%;}
+    body{padding:18px;padding-bottom:40px;}
+    .app{width:min(1180px,100%);margin:0 auto;}
+    .hero{background:radial-gradient(circle at top right,rgba(245,180,0,.12),transparent 35%),linear-gradient(135deg,#0d0d0d,#151515);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);margin-bottom:18px;}
+    .brand{display:flex;gap:14px;align-items:center;margin-bottom:18px;}
+    .logo{width:46px;height:46px;border-radius:14px;background:var(--accent);color:#000;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;letter-spacing:-1px;flex-shrink:0;}
+    h1{margin:0;font-size:clamp(22px,4vw,42px);letter-spacing:-.04em;}
+    .subtitle{margin:7px 0 0;color:var(--muted);font-size:15px;}
+    .grid-top{display:grid;grid-template-columns:1fr 1fr 210px 170px;gap:14px;}
+    label{display:block;color:var(--muted);font-size:14px;margin:0 0 8px;}
+    input,select,textarea{width:100%;border:1px solid var(--line);background:var(--input);color:var(--text);border-radius:14px;padding:15px 14px;font-size:16px;outline:none;min-height:52px;}
+    input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(245,180,0,.15);}
+    input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+    input[type=number]{-moz-appearance:textfield;appearance:textfield;}
+    .summary{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;margin-bottom:18px;}
+    .total-card,.actions,.note,.custom-card,.filters{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;}
+    .total-box{border:2px solid var(--accent);border-radius:18px;padding:18px;min-height:122px;display:flex;flex-direction:column;justify-content:center;}
+    .total-title{color:var(--muted);font-size:15px;margin-bottom:6px;}
+    .total{font-size:clamp(32px,6vw,54px);font-weight:900;color:var(--accent);letter-spacing:-.04em;}
+    .small-total{margin-top:6px;color:var(--muted);font-size:13px;}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px;}
+    .stat{background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:12px;}
+    .stat b{display:block;font-size:18px;color:var(--accent);}.stat span{font-size:12px;color:var(--muted)}
+    .actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start;}
+    button{border:0;border-radius:16px;padding:15px 18px;min-height:52px;font-size:16px;font-weight:800;cursor:pointer;color:#000;background:var(--accent);-webkit-appearance:none;touch-action:manipulation;}
+    button.secondary{background:#2a2a2a;color:var(--white);} button.danger{background:#3a1f1f;color:#fff;border:1px solid #633}
+    .note{color:var(--muted);font-size:14px;margin-bottom:18px;}
+    .warning{color:var(--accent2);font-weight:700;}
+    .filters{display:grid;grid-template-columns:1.4fr .8fr .8fr;gap:12px;margin-bottom:16px;}
+    .sections{display:grid;grid-template-columns:1fr;gap:16px;}
+    details.section{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+    summary{list-style:none;cursor:pointer;padding:18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;}
+    summary::-webkit-details-marker{display:none}
+    .section-title h2{margin:0;font-size:22px;letter-spacing:-.03em;}.section-title p{margin:5px 0 0;color:var(--muted);font-size:13px;}
+    .chev{color:var(--accent);font-size:22px;font-weight:900;transition:.2s transform;} details[open] .chev{transform:rotate(90deg)}
+    .item{display:grid;grid-template-columns:1.45fr 145px 150px 120px;gap:12px;align-items:center;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.06);}
+    .item:last-child{border-bottom:0;}.item-name{font-size:16px;font-weight:700;}.item-name strong{color:var(--accent);font-weight:900;}.item-desc{font-size:12px;color:var(--muted);margin-top:3px;}.tag{display:inline-block;color:#000;background:var(--accent2);border-radius:999px;padding:2px 8px;font-size:11px;font-weight:900;margin-left:6px;}
+    .rate,.line-total{text-align:right;font-weight:800;white-space:nowrap;}.rate{color:var(--muted);}.line-total{color:var(--text);}
+    .qty{display:flex;align-items:center;gap:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--input);min-height:48px;}
+    .qty-btn{background:transparent;color:var(--accent);border:none;border-radius:0;font-size:22px;font-weight:900;min-height:48px;width:44px;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;touch-action:manipulation;}
+    .qty-btn:active{background:rgba(245,180,0,.15)} .qty input.qtyInput{border:none;background:transparent;text-align:center;font-weight:800;font-size:17px;padding:0;min-height:48px;border-radius:0;flex:1;width:0;color:var(--text);}.qty input.qtyInput:focus{box-shadow:none;border-color:transparent;}
+    .builder-only{display:none;} body.builder-mode .builder-only{display:block;} body.customer-mode .rate,body.customer-mode .line-total,body.customer-mode .builder-only-inline{display:none;} body.customer-mode .item{grid-template-columns:1fr 160px;}
+    .custom-card{margin:18px 0;}.custom-grid{display:grid;grid-template-columns:1.2fr 160px 160px;gap:12px;align-items:end;}.custom-list{margin-top:12px;border-top:1px solid var(--line)}
+    .footer-space{height:30px}.hide{display:none!important}.empty{padding:16px 18px;color:var(--muted);font-size:14px;}
+    @media (max-width:900px){body{padding:10px;padding-bottom:30px}.hero,.total-card,.actions,.note,.section,.custom-card,.filters{border-radius:18px}.grid-top,.summary,.filters,.custom-grid{grid-template-columns:1fr;gap:10px}.actions{grid-template-columns:1fr 1fr}button{width:100%;padding:14px 10px;font-size:15px}summary{padding:14px}.item,body.builder-mode .item,body.customer-mode .item{display:flex;flex-direction:column;gap:10px;padding:14px}.item-row-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;width:100%}.item-row-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%}.rate,.line-total,body.customer-mode .line-total,body.builder-mode .line-total{display:block!important;text-align:right;white-space:nowrap;font-weight:800}.rate{color:var(--muted);font-size:13px}.line-total{color:var(--accent);font-size:15px}body.customer-mode .rate,body.customer-mode .builder-only-inline{display:none!important}.item-name{font-size:15px;flex:1}.qty{min-width:130px;max-width:165px}.qty-btn{width:40px;font-size:20px}.stats{grid-template-columns:1fr 1fr 1fr}}
+    @media print{body{background:#fff;color:#000;padding:0}.app{width:100%}.hero,.total-card,.note,.section,.custom-card,.filters{box-shadow:none;border-color:#ddd;background:#fff;color:#000;break-inside:avoid}.actions,.filters,.custom-card{display:none}input,select{border:1px solid #ddd;background:#fff;color:#000}.logo,button{background:#000;color:#fff}.total{color:#000}.total-box{border-color:#000}summary{border-bottom-color:#ddd}.item{border-bottom-color:#eee}.item-name strong{color:#000}.subtitle,.item-desc,.section-title p,.total-title,.small-total,label,.note{color:#444}.qty-btn{display:none}.chev{display:none}details.section{display:block}details.section:not([open])>*{display:block}}
+  </style>
+</head>
+<body class="customer-mode">
+  <main class="app">
+    <a href="../index.html" style="display:inline-flex;align-items:center;gap:6px;color:#b7b7b7;font-size:13px;font-weight:700;text-decoration:none;margin-bottom:10px">← Back to dashboard</a>
+    <section class="hero">
+      <div class="brand"><div class="logo">AC</div><div><h1>Cladding Quote Calculator Pro</h1><p class="subtitle">Same AC calculator system, rebuilt from Bell Plaster cladding invoices and order confirmation. Rates are supplier material prices ex GST. Customer mode adds the selected profit margin, then GST, while hiding internal pricing.</p></div></div>
+      <div class="grid-top">
+        <div><label for="project">Project / Address</label><input id="project" type="text" placeholder="e.g. Rowville exterior cladding" autocomplete="off" /></div>
+        <div><label for="customer">Prepared For</label><input id="customer" type="text" placeholder="Customer name" autocomplete="off" /></div>
+        <div><label for="mode">View Mode</label><select id="mode"><option value="customer" selected>Customer Quote</option><option value="builder">Builder Price</option></select></div>
+        <div><label for="profitMargin">Profit Margin %</label><input id="profitMargin" type="number" min="0" step="1" value="20" /></div>
+      </div>
+    </section>
+
+    <section class="summary">
+      <div class="total-card"><div class="total-box"><div class="total-title" id="totalTitle">Customer Quote Total inc GST</div><div class="total" id="grandTotal">$0.00</div><div class="small-total builder-only" id="builderBreakdown">Ex GST: $0.00 | GST: $0.00</div></div><div class="stats"><div class="stat"><b id="itemCount">0</b><span>Selected items</span></div><div class="stat"><b id="qtyCount">0</b><span>Total quantity</span></div><div class="stat"><b id="subTotalMini">$0</b><span>Base ex GST</span></div></div></div>
+      <div class="actions"><button type="button" id="printBtn">Print / Save PDF</button><button type="button" class="secondary" id="clearBtn">Clear Quantities</button><button type="button" class="secondary" id="expandBtn">Open All</button><button type="button" class="danger" id="closeBtn">Close All</button></div>
+    </section>
+
+    <section class="note"><span class="warning">Customer Quote mode:</span> shows only the final customer total inc GST. Builder rates, line totals and hidden margin are not shown. <span class="builder-only"><br><br><span class="warning">Builder Price mode:</span> shows internal ex GST rates, GST and line totals. These cladding rates are editable allowances, not supplier-locked prices, because apparently invoices are allowed to hide when they are most needed.</span></section>
+
+    <section class="filters"><div><label for="search">Search item</label><input id="search" type="text" placeholder="Search Thermory, C32, corner, delivery, full order..." /></div><div><label for="stageFilter">Stage</label><select id="stageFilter"><option value="all">All stages</option><option value="material">Material</option><option value="trim">Trims</option><option value="delivery">Delivery</option><option value="package">Packages</option></select></div><div><label for="quickAdd">Quick Add</label><select id="quickAdd"><option value="">Choose common item...</option><option value="mat-thermory-lm">Thermory C32 per LM</option><option value="mat-thermory-length">Thermory C32 5.4m Length</option><option value="trim-corner-piece">42x42 Corner Moulding</option><option value="package-revised-order">Revised Invoice Package</option><option value="delivery-charge">Delivery Charge</option></select></div></section>
+
+    <section class="sections" id="itemsWrap">
+      <details class="section" open data-stage="material"><summary><div class="section-title"><h2>Thermory C32 Cladding Material</h2><p>Supplier material rates from Bell Plaster invoice 430304. Use LM for exact invoice rate, or length/m² for faster quoting.</p></div><div class="chev">›</div></summary>
+        <div class="item" id="mat-thermory-lm" data-rate="15.71" data-stage="material"><div class="item-row-top"><div><div class="item-name"><strong>Thermory Pine Trax Natural C32 Cladding - 140 x 20</strong><span class="tag">LM</span><span class="tag">Invoice</span></div><div class="item-desc">Invoice rate: 151.40 LM charged at $15.71 per LM ex GST. Quantity = lineal metres.</div></div><div class="rate builder-only-inline">$15.71 / LM ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="decimal" min="0" step="0.01" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" id="mat-thermory-length" data-rate="84.97" data-stage="material"><div class="item-row-top"><div><div class="item-name"><strong>Thermory C32 Cladding - 5.4m Length</strong><span class="tag">each</span><span class="tag">Derived</span></div><div class="item-desc">Derived from invoice line: $2,379.24 ex GST ÷ 28 lengths = $84.97 per 5.4m length.</div></div><div class="rate builder-only-inline">$84.97 each ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="decimal" min="0" step="0.01" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="112.25" data-stage="material"><div class="item-row-top"><div><div class="item-name"><strong>Thermory C32 Cladding - estimated material coverage</strong><span class="tag">m²</span><span class="tag">Derived</span></div><div class="item-desc">Derived using 140mm board face: 151.40 LM × 0.14m = 21.20m²; $2,379.24 ÷ 21.20m² = $112.25/m² ex GST. Add waste separately if needed, because timber apparently refuses to install itself perfectly.</div></div><div class="rate builder-only-inline">$112.25 / m² ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="decimal" min="0" step="0.01" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="2379.24" data-stage="material"><div class="item-row-top"><div><div class="item-name"><strong>Thermory C32 Cladding - 28 Lengths / 151.40 LM</strong><span class="tag">Invoice</span></div><div class="item-desc">Full cladding material line from invoice/order: 28 lengths at 5400, total 151.40 LM, $2,379.24 ex GST.</div></div><div class="rate builder-only-inline">$2,379.24 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="decimal" min="0" step="0.01" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+      </details>
+
+      <details class="section" open data-stage="trim"><summary><div class="section-title"><h2>Corner Mouldings / Trims</h2><p>Corner moulding prices from the revised Bell Plaster invoice. The revised one is used because, naturally, invoices evolve like confused paperwork Pokémon.</p></div><div class="chev">›</div></summary>
+        <div class="item" id="trim-corner-piece" data-rate="46.42" data-stage="trim"><div class="item-row-top"><div><div class="item-name"><strong>42 x 42 THERMOLIT SPR Corner Mould CP3 @ 4200mm</strong><span class="tag">each</span><span class="tag">Invoice</span></div><div class="item-desc">Revised invoice rate: 6 pieces at $46.42 each ex GST, total $278.50 ex GST.</div></div><div class="rate builder-only-inline">$46.42 each ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="decimal" min="0" step="0.01" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="11.05" data-stage="trim"><div class="item-row-top"><div><div class="item-name"><strong>42 x 42 THERMOLIT SPR Corner Mould CP3</strong><span class="tag">LM</span><span class="tag">Derived</span></div><div class="item-desc">Derived from $46.42 per 4.2m length = $11.05 per LM ex GST. Quantity = lineal metres.</div></div><div class="rate builder-only-inline">$11.05 / LM ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="decimal" min="0" step="0.01" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="278.50" data-stage="trim"><div class="item-row-top"><div><div class="item-name"><strong>Corner Moulding Pack - 6 Pieces</strong><span class="tag">Invoice</span></div><div class="item-desc">Revised invoice corner moulding line: 6 pieces × $46.42 = $278.50 ex GST.</div></div><div class="rate builder-only-inline">$278.50 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="decimal" min="0" step="0.01" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+      </details>
+
+      <details class="section" open data-stage="delivery"><summary><div class="section-title"><h2>Delivery</h2><p>Delivery charge from Bell Plaster invoice/order.</p></div><div class="chev">›</div></summary>
+        <div class="item" id="delivery-charge" data-rate="86.36" data-stage="delivery"><div class="item-row-top"><div><div class="item-name"><strong>Delivery Charge / Express Delivery UTE</strong><span class="tag">each</span><span class="tag">Invoice</span></div><div class="item-desc">Invoice shows delivery at $86.36 ex GST. Order confirmation also shows shipping at $95.00 inc GST, same ex GST amount.</div></div><div class="rate builder-only-inline">$86.36 each ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="decimal" min="0" step="0.01" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+      </details>
+
+      <details class="section" open data-stage="package"><summary><div class="section-title"><h2>Invoice Packages</h2><p>One-click full material packages from the original and revised invoices.</p></div><div class="chev">›</div></summary>
+        <div class="item" data-rate="2651.24" data-stage="package"><div class="item-row-top"><div><div class="item-name"><strong>Original Invoice Package - 28 Lengths + 4 Corners + Delivery</strong><span class="tag">Invoice</span></div><div class="item-desc">Original proforma total ex GST: cladding $2,379.24 + delivery $86.36 + 4 corner mouldings $185.64 = $2,651.24 ex GST.</div></div><div class="rate builder-only-inline">$2,651.24 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="decimal" min="0" step="0.01" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" id="package-revised-order" data-rate="2744.10" data-stage="package"><div class="item-row-top"><div><div class="item-name"><strong>Revised Invoice Package - 28 Lengths + 6 Corners + Delivery</strong><span class="tag">Invoice</span></div><div class="item-desc">Revised proforma total ex GST: cladding $2,379.24 + delivery $86.36 + 6 corner mouldings $278.50 = $2,744.10 ex GST.</div></div><div class="rate builder-only-inline">$2,744.10 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="decimal" min="0" step="0.01" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="2465.60" data-stage="package"><div class="item-row-top"><div><div class="item-name"><strong>Order Confirmation Package - 28 Lengths + Delivery, no corners</strong><span class="tag">Order</span></div><div class="item-desc">Order email total $2,712.16 inc GST with $2,617.16 inc GST cladding and $95.00 inc GST shipping. Ex GST total = $2,465.60.</div></div><div class="rate builder-only-inline">$2,465.60 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="decimal" min="0" step="0.01" value="0"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div></div>
+      </details>
+    
+    </section>
+
+    <section class="custom-card"><h2 style="margin:0 0 10px;letter-spacing:-.03em">Custom Item</h2><div class="custom-grid"><div><label for="customName">Item Name</label><input id="customName" placeholder="e.g. Custom flashing" /></div><div><label for="customRate">Rate ex GST</label><input id="customRate" type="number" min="0" step="1" placeholder="250" /></div><div><button type="button" id="addCustomBtn">Add Item</button></div></div><div class="custom-list" id="customList"></div></section>
+    <div class="footer-space"></div>
+  </main>
+
+  <script>
+    (function(){
+      'use strict';
+      var GST_RATE = 0.10;
+      function money(value){var n=Number(value||0);return '$'+n.toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2});}
+      function shortMoney(value){var n=Number(value||0);return '$'+n.toLocaleString('en-AU',{maximumFractionDigits:0});}
+      function getQty(input){var value=parseFloat(input.value); if(isNaN(value)||value<0) return 0; return value;}
+      function rows(){return document.querySelectorAll('.item');}
+      function calculateTotals(){
+        var modeEl=document.getElementById('mode'); var mode=modeEl?modeEl.value:'customer';
+        var profitEl=document.getElementById('profitMargin'); var profitMargin=Math.max(0,Number(profitEl&&profitEl.value?profitEl.value:0));
+        var subtotalExGst=0, selected=0, qtyTotal=0;
+        rows().forEach(function(row){var rate=Number(row.getAttribute('data-rate')||0); var input=row.querySelector('.qtyInput'); var qty=input?getQty(input):0; var line=rate*qty; subtotalExGst+=line; if(qty>0){selected++; qtyTotal+=qty;} var lineBox=row.querySelector('.line-total'); if(lineBox) lineBox.textContent=money(line);});
+        var profitAmount=0; var quoteBaseExGst=subtotalExGst; if(mode==='customer' && subtotalExGst>0){profitAmount=subtotalExGst*(profitMargin/100); quoteBaseExGst=subtotalExGst+profitAmount;}
+        var gst=quoteBaseExGst*GST_RATE; var totalIncGst=quoteBaseExGst+gst;
+        document.getElementById('grandTotal').textContent=money(totalIncGst);
+        document.getElementById('totalTitle').textContent=mode==='customer'?'Customer Quote Total inc GST':'Builder Price Total inc GST';
+        document.getElementById('builderBreakdown').textContent='Base ex GST: '+money(subtotalExGst)+' | Profit: '+money(profitAmount)+' ('+profitMargin+'%) | Quote ex GST: '+money(quoteBaseExGst)+' | GST: '+money(gst);
+        document.getElementById('itemCount').textContent=selected; document.getElementById('qtyCount').textContent=qtyTotal; document.getElementById('subTotalMini').textContent=shortMoney(subtotalExGst);
+        document.body.classList.remove('customer-mode','builder-mode'); document.body.classList.add(mode==='customer'?'customer-mode':'builder-mode');
+      }
+      function clearQuantities(){document.querySelectorAll('.qtyInput').forEach(function(i){i.value='0';}); calculateTotals();}
+      function printPage(){calculateTotals(); setTimeout(function(){window.print();},50);}
+      function applyAiPrefill(){
+        try{var raw=localStorage.getItem('ac_ai_cladding_prefill_v1');if(!raw)return;var data=JSON.parse(raw);var inputs=document.querySelectorAll('.item .qtyInput');var quantities=data.quantities||[];inputs.forEach(function(input,index){input.value=Math.max(0,Number(quantities[index]||0));});var project=document.getElementById('project');var customer=document.getElementById('customer');var mode=document.getElementById('mode');if(project&&data.project)project.value=data.project;if(customer&&data.customer)customer.value=data.customer;if(mode&&data.mode)mode.value=data.mode;localStorage.removeItem('ac_ai_cladding_prefill_v1');}catch(e){}
+      }
+      function filterItems(){
+        var q=(document.getElementById('search').value||'').toLowerCase().trim(); var stage=document.getElementById('stageFilter').value;
+        document.querySelectorAll('details.section').forEach(function(sec){var any=false; var secStage=sec.getAttribute('data-stage'); sec.querySelectorAll('.item').forEach(function(item){var text=item.innerText.toLowerCase(); var itemStage=item.getAttribute('data-stage'); var okText=!q||text.indexOf(q)>-1; var okStage=stage==='all'||itemStage===stage||secStage===stage; var show=okText&&okStage; item.classList.toggle('hide',!show); if(show) any=true;}); sec.classList.toggle('hide',!any); if(q||stage!=='all') sec.open=true;});
+      }
+      function escapeHtml(str){return String(str).replace(/[<>&]/g,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;'}[c];});}
+      function addCustomItem(){
+        var name=(document.getElementById('customName').value||'').trim(); var rate=Number(document.getElementById('customRate').value||0); if(!name||rate<=0){return;}
+        var wrap=document.getElementById('customList'); var div=document.createElement('div'); div.className='item'; div.setAttribute('data-rate',rate); div.setAttribute('data-stage','extras'); div.innerHTML='<div class="item-row-top"><div><div class="item-name"><strong>'+escapeHtml(name)+'</strong><span class="tag">Custom</span></div><div class="item-desc">Custom cladding item added manually.</div></div><div class="rate builder-only-inline">'+money(rate).replace('.00','')+' ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button">−</button><input class="qtyInput" type="number" inputmode="decimal" min="0" step="0.01" value="1"><button class="qty-btn qty-plus" type="button">+</button></div><div class="line-total">$0.00</div></div>';
+        wrap.appendChild(div); document.getElementById('customName').value=''; document.getElementById('customRate').value=''; attachInputEvents(div); calculateTotals();
+      }
+      function attachInputEvents(scope){(scope||document).querySelectorAll('.qtyInput').forEach(function(inp){inp.addEventListener('input',calculateTotals,false); inp.addEventListener('change',calculateTotals,false); inp.addEventListener('blur',calculateTotals,false);});}
+      function bump(btn){var qtyWrap=btn.closest('.qty'); if(!qtyWrap)return; var inp=qtyWrap.querySelector('.qtyInput'); if(!inp)return; var v=getQty(inp); inp.value=btn.classList.contains('qty-plus')?v+1:Math.max(0,v-1); calculateTotals();}
+      function attachEvents(){
+        attachInputEvents(document);
+        document.addEventListener('click',function(e){var btn=e.target; if(btn.classList&&btn.classList.contains('qty-btn')){bump(btn);}},false);
+        document.addEventListener('touchend',function(e){var btn=e.target; if(btn.classList&&btn.classList.contains('qty-btn')){e.preventDefault(); bump(btn);}},false);
+        ['mode','profitMargin'].forEach(function(id){var el=document.getElementById(id); if(el){el.addEventListener('input',calculateTotals,false); el.addEventListener('change',calculateTotals,false);}});
+        document.getElementById('clearBtn').addEventListener('click',clearQuantities,false); document.getElementById('printBtn').addEventListener('click',printPage,false);
+        document.getElementById('expandBtn').addEventListener('click',function(){document.querySelectorAll('details.section').forEach(function(d){d.open=true;});},false);
+        document.getElementById('closeBtn').addEventListener('click',function(){document.querySelectorAll('details.section').forEach(function(d){d.open=false;});},false);
+        document.getElementById('search').addEventListener('input',filterItems,false); document.getElementById('stageFilter').addEventListener('change',filterItems,false);
+        document.getElementById('quickAdd').addEventListener('change',function(){if(!this.value)return; var target=document.getElementById(this.value); if(target){var inp=target.querySelector('.qtyInput'); inp.value=getQty(inp)+1; target.closest('details').open=true; target.scrollIntoView({behavior:'smooth',block:'center'}); calculateTotals();} this.value='';},false);
+        document.getElementById('addCustomBtn').addEventListener('click',addCustomItem,false);
+      }
+      if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){attachEvents();applyAiPrefill();calculateTotals();},false);}else{attachEvents();applyAiPrefill();calculateTotals();}
+      window.ACCladdingQuote={calculateTotals:calculateTotals,clearQuantities:clearQuantities,printPage:printPage};
+    })();
+  </script>
+<script>
+window.ACProjectCapture = async function(){
+  var rows=Array.prototype.slice.call(document.querySelectorAll('.sections .item')),quantities=[],selected=[],base=0;
+  rows.forEach(function(row){var qty=Math.max(0,Number((row.querySelector('.qtyInput')||{}).value||0)),rate=Number(row.getAttribute('data-rate')||0),name=((row.querySelector('.item-name strong')||row.querySelector('.item-name')||{}).textContent||'Cladding item').trim();quantities.push(qty);if(qty>0){selected.push({name:name,quantity:qty,rate:rate,lineTotal:qty*rate});base+=qty*rate;}});
+  var mode=(document.getElementById('mode')||{}).value||'customer',margin=Math.max(0,Number((document.getElementById('profitMargin')||{}).value||20)),project=(document.getElementById('project')||{}).value||'',customer=(document.getElementById('customer')||{}).value||'',builder=base*1.1,customerTotal=base>0?base*(1+margin/100)*1.1:0,total=mode==='builder'?builder:customerTotal;
+  return{module:'cladding',title:(project?project+' — ':'')+'Cladding Estimate',summary:selected.length+' selected items • '+total.toLocaleString('en-AU',{style:'currency',currency:'AUD'}),data:{project:project,customer:customer,mode:mode,profitMargin:margin,quantities:quantities,items:selected,builderTotalIncGst:builder,customerTotalIncGst:customerTotal}};
+};
+</script>
+<script src="../shared/project-store.js"></script>
+<script src="../shared/project-bridge.js"></script>
+</body>
+</html>

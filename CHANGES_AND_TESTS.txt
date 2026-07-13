@@ -1,0 +1,44 @@
+COMPLETE AI FIX — CHANGES AND VALIDATION
+========================================
+
+Major fixes
+-----------
+- Full website package now starts at the ZIP root (no enclosing app folder).
+- Added missing logo/app-icon assets and .nojekyll.
+- Replaced local OCR Fast Scan with actual AI-backed Fast Vision.
+- Smart Review uses deeper reasoning and symbol/legend instructions.
+- Added PDF, Word, PNG, JPG, WEBP, TXT and CSV handling.
+- Strengthened electrical/plumbing/cladding symbol and scope rules.
+- Added explicit no-guess rules for moves, replacements and duplicate legends.
+- Plan totals use catalogue subtotal +20% profit, then +10% GST.
+- Fixed Quote Analysis authentication header for new Supabase publishable keys.
+- Quote Analysis uses fixed AC catalogues and the line-by-line $100 rule.
+- Updated Supabase function to support both plan and quote modes.
+- Removed the extra web-search stage from Quote Analysis to reduce failures.
+- Added a visible device-only storage warning and kept Backup/Restore.
+- Carpentry estimator scaffold remains hidden and disabled.
+- Updated service-worker cache version and made missing optional assets harmless.
+
+Validation completed
+--------------------
+- JavaScript syntax checks: pass.
+- Supabase TypeScript bundle check: pass.
+- 23 Electrical, 25 Plumbing and 11 Cladding rates checked across calculators,
+  Plan Estimator, Quote Analysis and Edge Function: pass.
+- Rate ordering consistency: pass.
+- 20% profit then 10% GST formula: pass.
+- Root route/static asset HTTP checks: pass.
+- Fast Vision request/auth mock integration: pass.
+- Quote Analysis extraction and $100 rule mock integration: pass.
+- Projects local-save UI integration: pass.
+- Secret-pattern scan: pass.
+- ZIP integrity and clean extraction: run before delivery.
+
+Not possible without the owner's live credentials
+-------------------------------------------------
+- A real OpenAI response through the owner's deployed Supabase function.
+- Confirmation of the owner's OpenAI model access/billing/quota.
+- Final accuracy against every possible third-party drawing convention.
+
+Always verify AI quantities against the legend and have the relevant licensed
+trade/Builder confirm scope before issuing a real quote.

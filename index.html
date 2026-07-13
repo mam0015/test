@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#050505">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Alert Construction | Your Building Clinic</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./assets/app-icon.svg" type="image/svg+xml">
+  <style>
+    :root{
+      --bg:#050505; --panel:#111; --panel-2:#171717; --text:#f7f7f7;
+      --muted:#b8b8b8; --yellow:#f5b400; --yellow-soft:#ffd15a;
+      --line:rgba(255,255,255,.14); --line-yellow:rgba(245,180,0,.65);
+      --shadow:0 28px 80px rgba(0,0,0,.5);
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html{scroll-behavior:smooth;background:var(--bg)}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;min-height:100vh}
+    a{color:inherit;text-decoration:none}
+    button,input,select,textarea{font:inherit}
+    .shell{min-height:100vh;background:#050505}
+    .topbar{
+      height:98px;display:flex;align-items:center;justify-content:space-between;gap:20px;
+      padding:0 clamp(20px,4vw,64px);border-bottom:1px solid var(--line);background:rgba(3,3,3,.96);
+      position:sticky;top:0;z-index:20;backdrop-filter:blur(18px)
+    }
+    .brand{display:flex;align-items:center;min-width:0}
+    .brand img{width:clamp(190px,21vw,325px);height:68px;object-fit:contain;object-position:left center;display:block}
+    .nav{display:flex;align-items:center;gap:16px}
+    .nav a{display:flex;align-items:center;gap:10px;padding:18px 8px 15px;border-bottom:3px solid var(--yellow);font-weight:750}
+    .nav svg{width:22px;height:22px;stroke:var(--yellow)}
+
+    .hero{
+      position:relative;min-height:calc(100vh - 98px);overflow:hidden;
+      background-image:radial-gradient(circle at 82% 18%,rgba(245,180,0,.16),transparent 46%),linear-gradient(160deg,#0c0c0c,#020202 60%);
+      background-size:cover;background-position:center;
+    }
+    .hero:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,transparent 45%,rgba(5,5,5,.55) 70%,#050505 100%)}
+    .hero-inner{position:relative;z-index:2;max-width:1480px;margin:0 auto;padding:clamp(70px,9vh,130px) clamp(20px,5vw,84px) 56px}
+    .intro{max-width:660px}
+    .eyebrow{color:var(--yellow);font-weight:900;letter-spacing:.17em;text-transform:uppercase;font-size:clamp(13px,1.2vw,18px);margin-bottom:18px}
+    h1{margin:0;font-size:clamp(46px,5.8vw,92px);line-height:.98;letter-spacing:-.055em;max-width:780px}
+    .accent-line{width:70px;height:4px;background:var(--yellow);margin:28px 0 24px;border-radius:99px}
+    .intro p{margin:0;color:#c9c9c9;font-size:clamp(17px,1.6vw,24px);line-height:1.55;max-width:610px}
+
+    .tools-title{display:flex;align-items:center;gap:13px;margin-top:64px;color:var(--yellow);font-weight:900;letter-spacing:.1em;text-transform:uppercase;font-size:18px}
+    .tools-title svg{width:25px;height:25px;stroke:var(--yellow)}
+    .today-alert{display:none;align-items:center;justify-content:space-between;gap:14px;margin-top:36px;padding:16px 18px;border:1px solid rgba(245,180,0,.55);border-radius:17px;background:rgba(245,180,0,.08)}
+    .today-alert.show{display:flex}.today-alert strong,.today-alert span{display:block}.today-alert span{color:#cfcfcf;font-size:13px;margin-top:3px}.today-alert a{flex:none;padding:10px 13px;border-radius:12px;background:var(--yellow);color:#050505;font-weight:900}
+    .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:22px}
+    .tool{
+      min-height:330px;border:1px solid var(--line-yellow);border-radius:22px;padding:28px 24px 24px;
+      background:linear-gradient(145deg,rgba(30,30,30,.95),rgba(8,8,8,.97));
+      box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;text-align:center;
+      position:relative;overflow:hidden;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease;
+    }
+    .tool:before{content:"";position:absolute;inset:auto -30% -65% -30%;height:230px;background:radial-gradient(circle,rgba(245,180,0,.17),transparent 65%);pointer-events:none}
+    .tool:hover,.tool:focus-visible{transform:translateY(-6px);border-color:var(--yellow);box-shadow:0 32px 80px rgba(0,0,0,.62),0 0 0 1px rgba(245,180,0,.15)}
+    .tool-icon{width:78px;height:78px;display:grid;place-items:center;color:var(--yellow);margin:4px 0 18px}
+    .tool-icon svg{width:70px;height:70px;stroke:currentColor;stroke-width:1.65;fill:none;stroke-linecap:round;stroke-linejoin:round}
+    .tool h2{font-size:clamp(22px,2vw,30px);line-height:1.15;letter-spacing:-.035em;margin:0}
+    .tool p{color:var(--muted);font-size:15px;line-height:1.5;margin:14px 0 24px;max-width:230px}
+    .go{margin-top:auto;width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:var(--yellow);color:#070707;box-shadow:0 12px 30px rgba(245,180,0,.22)}
+    .go svg{width:25px;height:25px;stroke:currentColor;stroke-width:2.3;fill:none}
+    .footer{position:relative;z-index:3;border-top:1px solid rgba(245,180,0,.2);display:flex;justify-content:space-between;gap:20px;align-items:center;padding:24px clamp(20px,4vw,64px);color:#989898;background:#050505;font-size:13px}
+    .footer strong{color:#d8d8d8;font-weight:700}
+
+    @media(max-width:1050px){
+      .tools-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .hero{min-height:auto}
+    }
+    @media(max-width:680px){
+      .topbar{height:82px;padding:0 16px}.brand img{width:190px;height:56px}.nav span{display:none}.nav a{padding:15px 4px 12px}
+      .hero-inner{padding:58px 14px 40px}.hero{background-position:62% center}.intro{max-width:92%}
+      .tools-title{margin-top:52px}.tools-grid{grid-template-columns:1fr;gap:14px}.tool{min-height:280px;border-radius:20px;padding:24px 18px 20px}
+      .footer{align-items:flex-start;flex-direction:column}
+    }
+    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="Alert Construction home">
+        <img src="./assets/alert-construction-logo-white.svg" alt="Alert Construction">
+      </a>
+      <nav class="nav" aria-label="Primary navigation">
+        <a href="./projects/index.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h6l2 2h8v11H4z"></path></svg>
+          <span>Projects</span>
+        </a>
+        <a href="#tools" aria-current="page">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5.5 9.5V21h13V9.5"></path><path d="M9.5 21v-6h5v6"></path></svg>
+          <span>Dashboard</span>
+        </a>
+      </nav>
+    </header>
+
+    <main class="hero">
+      <div class="hero-inner">
+        <section class="intro">
+          <div class="eyebrow">Welcome to</div>
+          <h1>Your Building Clinic</h1>
+          <div class="accent-line" aria-hidden="true"></div>
+          <p>All your estimating and site management tools in one place.</p>
+        </section>
+
+        <div class="today-alert" id="todayAlert"><div><strong id="todayAlertTitle">Today’s project tasks</strong><span id="todayAlertText"></span></div><a href="./projects/index.html">Open Schedule</a></div>
+
+        <div class="tools-title" id="tools">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect></svg>
+          Tools
+        </div>
+
+        <section class="tools-grid" aria-label="Alert Construction tools">
+          <a class="tool" href="./electrical/index.html" data-tool="electrical">
+            <div class="tool-icon"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M36 3 15 35h16l-4 26 22-34H34z"></path></svg></div>
+            <h2>Electrical<br>Estimate</h2>
+            <p>Create electrical quotes quickly and accurately.</p>
+            <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span>
+          </a>
+
+          <a class="tool" href="./plumbing/index.html" data-tool="plumbing">
+            <div class="tool-icon"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M18 22h23"></path><path d="M23 22v-8h19"></path><path d="M42 14V9"></path><path d="M37 9h10"></path><path d="M18 22v10"></path><path d="M10 32h24v10H10z"></path><path d="M34 37h10c7 0 10 5 10 10"></path><path d="M54 47c0 4-3 7-7 7s-7-3-7-7"></path></svg></div>
+            <h2>Plumbing<br>Estimate</h2>
+            <p>Build plumbing quotes with live totals and clear items.</p>
+            <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span>
+          </a>
+
+          <a class="tool" href="./cladding/index.html" data-tool="cladding">
+            <div class="tool-icon"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 18 30 7l26 13v31L34 61 8 49z"></path><path d="M30 7v41"></path><path d="m8 18 22 10 26-8"></path><path d="m30 48 26-11"></path></svg></div>
+            <h2>Cladding<br>Estimate</h2>
+            <p>Quote cladding materials, trims and delivery.</p>
+            <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span>
+          </a>
+
+          <a class="tool" href="./plan-ai/index.html" data-tool="plan-ai">
+            <div class="tool-icon"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M12 8h31l9 9v39H12z"></path><path d="M43 8v10h9"></path><path d="M20 27h16M20 35h12M44 31v12M38 37h12"></path></svg></div>
+            <h2>AI Plan<br>Estimator</h2>
+            <p>Upload a plan, ask questions and estimate electrical, plumbing or cladding.</p>
+            <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span>
+          </a>
+
+          <a class="tool" href="./quote-analysis/index.html" data-tool="quote-analysis">
+            <div class="tool-icon"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M12 8h40v48H12z"></path><path d="M20 20h24"></path><path d="M20 29h14"></path><path d="M20 45l8-8 7 6 10-13"></path></svg></div>
+            <h2>Quote Price<br>Analysis</h2>
+            <p>Upload a trade quote and check every item against our rates.</p>
+            <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span>
+          </a>
+
+          <a class="tool" href="./projects/index.html" data-tool="projects">
+            <div class="tool-icon"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 16h19l5 6h24v32H8z"></path><path d="M18 34h28M18 43h20"></path></svg></div>
+            <h2>Projects &<br>Schedule</h2>
+            <p>Save every estimate and see today’s project tasks.</p>
+            <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span>
+          </a>
+
+          <a class="tool" href="./checklist/index.html" data-tool="checklist">
+            <div class="tool-icon"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M20 10h24l8 8v38H12V10z"></path><path d="M24 10c0-5 3-7 8-7s8 2 8 7"></path><path d="m20 28 4 4 7-8"></path><path d="M35 28h10"></path><path d="m20 41 4 4 7-8"></path><path d="M35 41h10"></path></svg></div>
+            <h2>Site Supervisor<br>Checklist</h2>
+            <p>Manage site inspection tasks and visit notes.</p>
+            <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span>
+          </a>
+        </section>
+      </div>
+    </main>
+
+    <footer class="footer"><strong>Alert Construction</strong><span>Your Building Clinic</span></footer>
+  </div>
+  <script src="./shared/project-store.js"></script>
+  <script>
+    if (window.ACProjects) {
+      var due = window.ACProjects.dueTasks();
+      if (due.length) {
+        var alertBox = document.getElementById('todayAlert');
+        document.getElementById('todayAlertTitle').textContent = due.length + (due.length === 1 ? ' task needs attention' : ' tasks need attention');
+        document.getElementById('todayAlertText').textContent = due.slice(0,3).map(function(task){ return task.projectName + ': ' + task.title; }).join(' • ');
+        alertBox.classList.add('show');
+      }
+    }
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function(){ navigator.serviceWorker.register('./sw.js').catch(function(){}); });
+    }
+  </script>
+</body>
+</html>

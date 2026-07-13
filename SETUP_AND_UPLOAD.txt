@@ -1,0 +1,172 @@
+ALERT CONSTRUCTION — COMPLETE ROOT + AI FIX
+============================================
+
+IMPORTANT: GITHUB AND SUPABASE ARE TWO SEPARATE DEPLOYS.
+Uploading this package to GitHub updates the website. It does NOT deploy the
+Supabase Edge Function. Complete Part A and Part B below.
+
+
+PART A — UPLOAD THE WEBSITE TO THE GITHUB REPOSITORY ROOT
+----------------------------------------------------------
+
+The current repository is broken because the app is inside one extra folder:
+AC_Construction_Combined-2/
+
+GitHub Pages needs index.html and the app folders at the repository root.
+
+1. Unzip AC_Alert_Construction_COMPLETE_AI_FIX_20260713.zip.
+2. OPEN the unzipped folder.
+3. Press Command+A to select the CONTENTS inside it.
+4. In GitHub, open mam0015/Alert-Construction and stay on the main root page.
+5. Choose Add file > Upload files.
+6. Drag the selected CONTENTS into GitHub. Do not drag the enclosing folder.
+7. Commit the upload to main.
+
+CORRECT GITHUB ROOT AFTER UPLOAD:
+
+  index.html
+  .nojekyll
+  assets/
+  electrical/
+  plumbing/
+  cladding/
+  plan-ai/
+  quote-analysis/
+  projects/
+  shared/
+  checklist/
+  supabase/
+
+WRONG:
+
+  AC_Complete_AI_Root_Fix_20260713/index.html
+  AC_Construction_Combined-2/index.html
+
+After the root version is working, the old AC_Construction_Combined-2 folder
+can be deleted from GitHub because it is only a duplicate old version.
+
+
+PART B — DEPLOY THE UPDATED SUPABASE EDGE FUNCTION
+--------------------------------------------------
+
+Function name (exactly): analyse-plan
+
+Source file in this package:
+supabase/functions/analyse-plan/index.ts
+
+Required Supabase Edge Function secret:
+OPENAI_API_KEY = your server-side OpenAI API key
+
+Optional secret:
+OPENAI_MODEL = gpt-5.6
+
+Never put OPENAI_API_KEY in GitHub, config.js or browser code.
+
+If using the Supabase Dashboard:
+
+1. Edge Functions > analyse-plan > Code.
+2. Replace the function code with the complete index.ts from this package.
+3. Deploy updates.
+4. Open the function Settings and turn legacy Verify JWT OFF.
+   The function code still validates the Supabase publishable apikey with
+   withSupabase; this setting is required because sb_publishable keys are not
+   legacy JWT strings.
+5. Edge Functions > Secrets: confirm OPENAI_API_KEY exists.
+
+If using Supabase CLI from the repository:
+
+  supabase functions deploy analyse-plan --no-verify-jwt
+
+The included supabase/config.toml also contains verify_jwt = false.
+
+
+PART C — CLEAN TEST
+-------------------
+
+1. Wait for GitHub Pages to finish deploying.
+2. Open a new private tab only for a clean test.
+3. Test these exact links:
+
+Dashboard:
+https://mam0015.github.io/Alert-Construction/
+
+AI Plan Estimator:
+https://mam0015.github.io/Alert-Construction/plan-ai/
+
+Quote Price Analysis:
+https://mam0015.github.io/Alert-Construction/quote-analysis/
+
+Projects:
+https://mam0015.github.io/Alert-Construction/projects/
+
+4. Test Plan Estimator once with Fast Vision and once with Smart Review.
+5. Test Quote Analysis with a real quote, not an electrical plan.
+
+
+HOW PLAN SYMBOL RECOGNITION WORKS
+---------------------------------
+
+Fast Vision:
+- one AI vision pass;
+- quicker and lower cost;
+- reads the drawing legend, symbols, schedules and visible annotations;
+- more risk, so every editable quantity must be checked.
+
+Smart Review:
+- deeper AI review of relevant pages, legends, rooms, notes and revisions;
+- checks duplicate counts more carefully;
+- slower and lower risk, but still requires a Builder/licensed-trade check.
+
+Both modes work for Electrical, Plumbing and Cladding and use the existing AC
+catalogue ordering and rates. Carpentry is only a hidden disabled code scaffold
+until a verified catalogue and rules are added later.
+
+Important limitation: one final plan cannot prove that an item was moved or
+replaced. The system classifies relocation/replacement only when existing,
+demolition and proposed plans, revision notes or explicit annotations support it.
+
+For graphical Word plans, exporting Word to PDF before upload gives the most
+reliable symbol recognition. Word/TXT/CSV are accepted, but PDF preserves the
+page geometry and embedded drawing best.
+
+
+PRICING
+-------
+
+Plan customer estimate:
+1. AC catalogue subtotal ex GST
+2. add 20% profit
+3. add 10% GST to that result
+
+Example: $1,000 + 20% = $1,200; GST = $120; total = $1,320.
+
+Quote Analysis compares each quoted ex-GST line with the matching AC ex-GST
+catalogue line:
+- above by more than $100 = EXPENSIVE
+- below by more than $100 = CHEAP
+- from -$100 through +$100 = FAIR
+- no reliable match = NEED REVIEW
+
+
+WHERE PROJECTS ARE SAVED
+------------------------
+
+Projects, tasks and result metadata are saved in this browser's localStorage.
+Attachments are saved in this browser's IndexedDB. They are on the current
+browser/device only — not in GitHub, not on the website server, and not in
+Supabase. They do not automatically sync between devices.
+
+Private/incognito storage can disappear when private tabs are closed. Use the
+Projects page > Export Backup regularly. Restore Backup can load that JSON file
+on another browser/device.
+
+
+SECURITY / PRE-RELEASE CHECK
+----------------------------
+
+- The GitHub package contains only the Supabase publishable key, which is meant
+  for browser use.
+- It contains no OpenAI secret key and no Supabase secret/service-role key.
+- Keep OPENAI_API_KEY only in Supabase Edge Function Secrets.
+- All AI output remains editable and is a preliminary estimate, not a final
+  trade quote or compliance decision.

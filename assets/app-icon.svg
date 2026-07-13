@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Alert Construction">
+  <rect width="512" height="512" rx="104" fill="#050505"/>
+  <path d="M286 48 112 288h128l-30 176 190-270H272z" fill="#f5b400"/>
+  <path d="M286 48 112 288h128l-30 176 190-270H272z" fill="none" stroke="#ffd86e" stroke-width="10" stroke-linejoin="round"/>
+</svg>

@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="format-detection" content="telephone=no" />
+<title>Site Supervisor Checklist | Alert Construction</title>
+<link rel="icon" href="../assets/app-icon.svg" type="image/svg+xml">
+<style>
+  :root{
+    --bg:#050505; --panel:#111111; --panel2:#171717; --line:#2b2b2b;
+    --text:#f5f5f5; --muted:#b7b7b7; --accent:#f5b400; --accent2:#ffd36a;
+    --danger:#ff6868; --ok:#5fd47a; --input:#202020; --shadow:0 18px 45px rgba(0,0,0,.35);
+    --radius:22px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.35}
+  body{padding:18px;padding-bottom:60px}
+  a{color:var(--accent)}
+  .app{width:min(920px,100%);margin:0 auto}
+  .backlink{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:14px;font-weight:700;margin-bottom:14px}
+  .backlink svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.4}
+  .hero{background:linear-gradient(135deg,#0d0d0d,#151515);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);margin-bottom:16px}
+  .brand{display:flex;gap:14px;align-items:center;margin-bottom:6px}
+  .logo{width:46px;height:46px;border-radius:14px;background:var(--accent);color:#000;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;flex-shrink:0}
+  h1{margin:0;font-size:clamp(22px,4vw,36px);letter-spacing:-.03em}
+  .subtitle{margin:6px 0 0;color:var(--muted);font-size:14px}
+
+  .progress-wrap{margin-top:18px}
+  .progress-row{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:6px}
+  .progress-track{height:10px;border-radius:99px;background:var(--input);overflow:hidden;border:1px solid var(--line)}
+  .progress-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px;transition:width .25s ease;width:0%}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+  .card h2{margin:0 0 14px;font-size:17px;letter-spacing:-.02em}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  label{display:block;color:var(--muted);font-size:13px;margin:0 0 6px}
+  input,select,textarea{width:100%;border:1px solid var(--line);background:var(--input);color:var(--text);border-radius:12px;padding:12px 13px;font-size:15px;outline:none}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(245,180,0,.15)}
+  textarea{min-height:80px;resize:vertical}
+  .field{margin-bottom:12px}
+
+  .section{margin-bottom:12px}
+  .section-head{display:flex;align-items:center;justify-content:space-between;cursor:pointer;gap:10px}
+  .section-head h2{flex:1}
+  .section-count{font-size:13px;color:var(--muted);white-space:nowrap}
+  .chevron{width:18px;height:18px;stroke:var(--muted);fill:none;stroke-width:2.4;transition:transform .2s ease;flex-shrink:0}
+  .section.open .chevron{transform:rotate(180deg)}
+  .items{display:none;margin-top:12px;border-top:1px solid var(--line);padding-top:12px}
+  .section.open .items{display:block}
+  .item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+  .item:last-child{border-bottom:none}
+  .check{width:26px;height:26px;border-radius:8px;border:2px solid var(--line);background:var(--input);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;margin-top:2px}
+  .check svg{width:16px;height:16px;stroke:#050505;fill:none;stroke-width:3;opacity:0}
+  .check.checked{background:var(--accent);border-color:var(--accent)}
+  .check.checked svg{opacity:1}
+  .item-body{flex:1;min-width:0}
+  .item-label{font-size:15px;margin-bottom:6px}
+  .item-label.done{color:var(--muted);text-decoration:line-through}
+  .item-note{width:100%;border:1px solid var(--line);background:transparent;color:var(--text);border-radius:9px;padding:8px 10px;font-size:13px}
+  .item-note::placeholder{color:#6b6b6b}
+
+  .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px}
+  .btn{border:none;border-radius:14px;padding:14px 18px;font-weight:800;font-size:15px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+  .btn-primary{background:var(--accent);color:#050505}
+  .btn-ghost{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+  .btn-danger{background:transparent;color:var(--danger);border:1px solid rgba(255,104,104,.4)}
+  .save-note{color:var(--muted);font-size:13px;margin-top:8px;min-height:16px}
+
+  @media(max-width:600px){.grid2{grid-template-columns:1fr}}
+
+  @media print{
+    body{background:#fff;color:#000;padding:0}
+    .backlink,.actions,.save-note{display:none!important}
+    .hero,.card{box-shadow:none;border-color:#ccc;background:#fff;color:#000;break-inside:avoid}
+    .items{display:block!important}
+    .chevron{display:none}
+    .check{border-color:#999}
+    .check.checked{background:#000;border-color:#000}
+    .check.checked svg{stroke:#fff}
+    .item-label.done{color:#333}
+    input,select,textarea{border-color:#ccc;background:#fff;color:#000}
+    .progress-bar{background:#000}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <a class="backlink" href="../index.html">
+    <svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>
+    Back to dashboard
+  </a>
+
+  <div class="hero">
+    <div class="brand">
+      <div class="logo">A</div>
+      <div>
+        <h1>Site Supervisor Checklist</h1>
+        <p class="subtitle">Melbourne site inspection &amp; visit notes</p>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-row"><span id="progressLabel">0 of 0 items complete</span><span id="progressPct">0%</span></div>
+      <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Site Visit Summary</h2>
+    <div class="grid2">
+      <div class="field"><label for="projectName">Project Name</label><input id="projectName" type="text" placeholder="e.g. 24 Bell St Renovation"></div>
+      <div class="field"><label for="siteAddress">Site Address</label><input id="siteAddress" type="text" placeholder="Site address"></div>
+      <div class="field"><label for="builder">Builder</label><input id="builder" type="text" placeholder="Builder name"></div>
+      <div class="field"><label for="supervisor">Supervisor</label><input id="supervisor" type="text" placeholder="Supervisor name"></div>
+      <div class="field"><label for="visitDate">Date</label><input id="visitDate" type="date"></div>
+      <div class="field"><label for="weather">Weather</label><input id="weather" type="text" placeholder="e.g. Fine, 18°C"></div>
+      <div class="field"><label for="overallStatus">Overall Status</label>
+        <select id="overallStatus">
+          <option value="">Select status</option>
+          <option value="On Track">On Track</option>
+          <option value="Minor Issues">Minor Issues</option>
+          <option value="Major Issues">Major Issues</option>
+          <option value="Not Ready">Not Ready</option>
+        </select>
+      </div>
+      <div class="field"><label for="nextVisit">Next Visit</label><input id="nextVisit" type="date"></div>
+    </div>
+    <div class="field" style="margin-top:2px">
+      <label for="majorDefects">Major Defects / Actions</label>
+      <textarea id="majorDefects" placeholder="List major defects and required actions..."></textarea>
+    </div>
+  </div>
+
+  <div id="sections"></div>
+
+  <div class="card">
+    <div class="actions">
+      <button class="btn btn-primary" id="printBtn">Print / Save PDF</button>
+      <button class="btn btn-ghost" id="expandAllBtn">Expand All</button>
+      <button class="btn btn-ghost" id="collapseAllBtn">Collapse All</button>
+      <button class="btn btn-danger" id="resetBtn">Reset Checklist</button>
+    </div>
+    <div class="save-note" id="saveNote"></div>
+  </div>
+</div>
+
+<script>
+const SECTIONS = [
+  { name: "General Site", items: ["Site fencing","Site signage","PPE compliance","Site clean","Access clear","Photos taken"] },
+  { name: "Carpentry", items: ["Frames complete","Walls complete","Windows installed","Doors installed","Architraves","Skirting","Lock-up complete"] },
+  { name: "Plumbing", items: ["Rough-in","Water test","Drainage","Toilet installed","Vanity","Tapware","Hot water"] },
+  { name: "Electrical", items: ["Rough-in","Switchboard","Lighting","Power points","Smoke alarms","Testing"] },
+  { name: "Waterproofing & Tiling", items: ["Waterproofing","Flood test","Wall tiles","Floor tiles","Grout","Silicone"] },
+  { name: "Painting", items: ["Preparation","Undercoat","Top coats","Touch ups"] },
+  { name: "Cabinetry", items: ["Kitchen","Laundry","Vanity","Stone installed"] },
+  { name: "Final Inspection", items: ["Cleaning","Defects complete","Certificates received","Ready for inspection"] }
+];
+
+const STORAGE_KEY = "ac_checklist_state_v1";
+const FIELD_IDS = ["projectName","siteAddress","builder","supervisor","visitDate","weather","overallStatus","nextVisit","majorDefects"];
+
+function loadState(){
+  try{
+    const restore = localStorage.getItem("ac_project_checklist_restore_v1");
+    if (restore){ localStorage.removeItem("ac_project_checklist_restore_v1"); return JSON.parse(restore); }
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : { fields:{}, items:{}, open:{} };
+  }catch(e){ return { fields:{}, items:{}, open:{} }; }
+}
+let state = loadState();
+
+function itemKey(sectionIdx, itemIdx){ return sectionIdx + "_" + itemIdx; }
+
+function saveState(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    const note = document.getElementById("saveNote");
+    note.textContent = "Saved on this device \u2022 " + new Date().toLocaleTimeString();
+  }catch(e){}
+}
+
+function buildSections(){
+  const wrap = document.getElementById("sections");
+  wrap.innerHTML = "";
+  SECTIONS.forEach((section, sIdx) => {
+    const isOpen = state.open[sIdx] !== false; // default open
+    const secEl = document.createElement("div");
+    secEl.className = "card section" + (isOpen ? " open" : "");
+    secEl.innerHTML = `
+      <div class="section-head" data-sidx="${sIdx}">
+        <h2>${section.name}</h2>
+        <span class="section-count" id="count-${sIdx}"></span>
+        <svg class="chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="items" id="items-${sIdx}"></div>
+    `;
+    wrap.appendChild(secEl);
+
+    const itemsEl = secEl.querySelector(`#items-${sIdx}`);
+    section.items.forEach((label, iIdx) => {
+      const key = itemKey(sIdx, iIdx);
+      const itemState = state.items[key] || { done:false, note:"" };
+      const row = document.createElement("div");
+      row.className = "item";
+      row.innerHTML = `
+        <div class="check ${itemState.done ? "checked" : ""}" data-key="${key}">
+          <svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+        </div>
+        <div class="item-body">
+          <div class="item-label ${itemState.done ? "done" : ""}" data-key="${key}">${label}</div>
+          <input class="item-note" type="text" placeholder="note (optional)" data-key="${key}" value="${(itemState.note || "").replace(/"/g,'&quot;')}">
+        </div>
+      `;
+      itemsEl.appendChild(row);
+    });
+
+    secEl.querySelector(".section-head").addEventListener("click", () => {
+      state.open[sIdx] = !secEl.classList.contains("open");
+      secEl.classList.toggle("open");
+      saveState();
+    });
+  });
+
+  wrap.querySelectorAll(".check").forEach(el => {
+    el.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const key = el.getAttribute("data-key");
+      const cur = state.items[key] || { done:false, note:"" };
+      cur.done = !cur.done;
+      state.items[key] = cur;
+      el.classList.toggle("checked", cur.done);
+      const label = wrap.querySelector(`.item-label[data-key="${key}"]`);
+      if (label) label.classList.toggle("done", cur.done);
+      updateProgress();
+      saveState();
+    });
+  });
+
+  wrap.querySelectorAll(".item-note").forEach(el => {
+    el.addEventListener("input", () => {
+      const key = el.getAttribute("data-key");
+      const cur = state.items[key] || { done:false, note:"" };
+      cur.note = el.value;
+      state.items[key] = cur;
+      saveState();
+    });
+  });
+
+  updateProgress();
+}
+
+function updateProgress(){
+  let total = 0, done = 0;
+  SECTIONS.forEach((section, sIdx) => {
+    let sDone = 0;
+    section.items.forEach((label, iIdx) => {
+      const key = itemKey(sIdx, iIdx);
+      total++;
+      if (state.items[key] && state.items[key].done){ done++; sDone++; }
+    });
+    const countEl = document.getElementById(`count-${sIdx}`);
+    if (countEl) countEl.textContent = `${sDone}/${section.items.length}`;
+  });
+  const pct = total ? Math.round((done/total)*100) : 0;
+  document.getElementById("progressBar").style.width = pct + "%";
+  document.getElementById("progressLabel").textContent = `${done} of ${total} items complete`;
+  document.getElementById("progressPct").textContent = pct + "%";
+}
+
+function bindFields(){
+  FIELD_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (state.fields[id] !== undefined) el.value = state.fields[id];
+    el.addEventListener("input", () => {
+      state.fields[id] = el.value;
+      saveState();
+    });
+    el.addEventListener("change", () => {
+      state.fields[id] = el.value;
+      saveState();
+    });
+  });
+}
+
+document.getElementById("printBtn").addEventListener("click", () => window.print());
+
+document.getElementById("expandAllBtn").addEventListener("click", () => {
+  document.querySelectorAll(".section").forEach((el, idx) => { el.classList.add("open"); state.open[idx] = true; });
+  saveState();
+});
+document.getElementById("collapseAllBtn").addEventListener("click", () => {
+  document.querySelectorAll(".section").forEach((el, idx) => { el.classList.remove("open"); state.open[idx] = false; });
+  saveState();
+});
+
+document.getElementById("resetBtn").addEventListener("click", () => {
+  if (confirm("Reset the entire checklist? This clears all checkboxes, notes and site visit details on this device.")){
+    state = { fields:{}, items:{}, open:{} };
+    saveState();
+    FIELD_IDS.forEach(id => { const el = document.getElementById(id); if (el) el.value = ""; });
+    buildSections();
+  }
+});
+
+buildSections();
+bindFields();
+window.ACProjectCapture = async function(){
+  const completed = Object.values(state.items || {}).filter(item => item && item.done).length;
+  const total = SECTIONS.reduce((sum, section) => sum + section.items.length, 0);
+  return {module:"site-checklist",title:(state.fields.projectName || "Site Visit")+" — "+(state.fields.visitDate || new Date().toLocaleDateString("en-AU")),summary:completed+" of "+total+" checklist items complete",data:{state:JSON.parse(JSON.stringify(state)),completed:completed,total:total}};
+};
+</script>
+<script src="../shared/project-store.js"></script>
+<script src="../shared/project-bridge.js"></script>
+</body>
+</html>

@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="format-detection" content="telephone=no" />
+  <title>AC Electrical Quote Calculator</title>
+  <style>
+    :root{
+      --bg:#050505;
+      --panel:#111111;
+      --panel2:#171717;
+      --line:#2b2b2b;
+      --text:#f5f5f5;
+      --muted:#b7b7b7;
+      --accent:#f5b400;
+      --accent2:#ffd36a;
+      --danger:#ff6868;
+      --input:#202020;
+      --white:#ffffff;
+      --shadow:0 18px 45px rgba(0,0,0,.35);
+      --radius:22px;
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.35;min-height:100%;}
+    body{padding:18px;padding-bottom:40px;}
+    .app{width:min(1180px,100%);margin:0 auto;}
+    .hero{background:linear-gradient(135deg,#0d0d0d,#151515);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);margin-bottom:18px;}
+    .brand{display:flex;gap:14px;align-items:center;margin-bottom:18px;}
+    .logo{width:46px;height:46px;border-radius:14px;background:var(--accent);color:#000;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;letter-spacing:-1px;flex-shrink:0;}
+    h1{margin:0;font-size:clamp(20px,4vw,42px);letter-spacing:-.04em;}
+    .subtitle{margin:7px 0 0;color:var(--muted);font-size:15px;}
+    .grid-top{display:grid;grid-template-columns:1fr 1fr 240px;gap:14px;}
+    label{display:block;color:var(--muted);font-size:14px;margin:0 0 8px;}
+    input,select{width:100%;border:1px solid var(--line);background:var(--input);color:var(--text);border-radius:14px;padding:15px 14px;font-size:16px;outline:none;min-height:52px;}
+    input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(245,180,0,.15);}
+    /* hide number spinners */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+    input[type=number]{-moz-appearance:textfield;appearance:textfield;}
+    .summary{display:grid;grid-template-columns:1.2fr .8fr;gap:18px;margin-bottom:18px;}
+    .total-card,.actions,.note{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;}
+    .total-box{border:2px solid var(--accent);border-radius:18px;padding:18px;min-height:112px;display:flex;flex-direction:column;justify-content:center;}
+    .total-title{color:var(--muted);font-size:15px;margin-bottom:6px;}
+    .total{font-size:clamp(32px,6vw,54px);font-weight:900;color:var(--accent);letter-spacing:-.04em;}
+    .small-total{margin-top:6px;color:var(--muted);font-size:13px;}
+    .actions{display:flex;gap:12px;align-items:center;justify-content:flex-start;flex-wrap:wrap;}
+    button{border:0;border-radius:16px;padding:15px 18px;min-height:52px;font-size:16px;font-weight:800;cursor:pointer;color:#000;background:var(--accent);-webkit-appearance:none;touch-action:manipulation;}
+    button.secondary{background:#2a2a2a;color:var(--white);}
+    .note{color:var(--muted);font-size:14px;margin-bottom:18px;}
+    .warning{color:var(--accent2);font-weight:700;}
+    .sections{display:grid;grid-template-columns:1fr;gap:16px;}
+    .section{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+    .section-header{padding:18px 18px 10px;border-bottom:1px solid var(--line);display:flex;align-items:end;justify-content:space-between;gap:12px;}
+    .section h2{margin:0;font-size:22px;letter-spacing:-.03em;}
+    .section p{margin:5px 0 0;color:var(--muted);font-size:13px;}
+    /* Desktop item layout */
+    .item{display:grid;grid-template-columns:1.35fr 160px 150px 120px;gap:12px;align-items:center;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.06);}
+    .item:last-child{border-bottom:0;}
+    .item-name{font-size:16px;font-weight:700;}
+    .item-name strong{color:var(--accent);font-weight:900;}
+    .item-desc{font-size:12px;color:var(--muted);margin-top:3px;}
+    .rate,.line-total{text-align:right;font-weight:800;white-space:nowrap;}
+    .rate{color:var(--muted);}
+    .line-total{color:var(--text);}
+    /* Stepper control */
+    .qty{display:flex;align-items:center;gap:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--input);min-height:48px;}
+    .qty-btn{background:transparent;color:var(--accent);border:none;border-radius:0;font-size:22px;font-weight:900;min-height:48px;width:44px;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;touch-action:manipulation;}
+    .qty-btn:active{background:rgba(245,180,0,.15);}
+    .qty input.qtyInput{border:none;background:transparent;text-align:center;font-weight:800;font-size:17px;padding:0;min-height:48px;border-radius:0;flex:1;width:0;color:var(--text);}
+    .qty input.qtyInput:focus{box-shadow:none;border-color:transparent;}
+    .builder-only{display:none;}
+    body.builder-mode .builder-only{display:block;}
+    body.builder-mode .item{grid-template-columns:1.35fr 160px 150px 120px;}
+    body.customer-mode .rate,body.customer-mode .line-total,body.customer-mode .builder-only-inline{display:none;}
+    body.customer-mode .item{grid-template-columns:1fr 160px;}
+    .footer-space{height:30px;}
+
+    /* ── Mobile ── */
+    @media (max-width:820px){
+      body{padding:10px;padding-bottom:30px;}
+      .hero,.total-card,.actions,.note,.section{border-radius:18px;}
+      .grid-top{grid-template-columns:1fr;gap:10px;}
+      .summary{grid-template-columns:1fr;gap:12px;}
+      .actions{display:grid;grid-template-columns:1fr 1fr;}
+      button{width:100%;padding:14px 10px;font-size:15px;}
+      .section-header{display:block;padding:14px;}
+      /* Mobile item: name | line-total on top row; qty below */
+      .item,
+      body.builder-mode .item,
+      body.customer-mode .item{
+        display:flex;
+        flex-direction:column;
+        gap:10px;
+        padding:14px 14px;
+      }
+      .item-row-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;width:100%;}
+      .item-row-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;}
+      /* Show rate and line total on mobile */
+      .rate,
+      .line-total,
+      body.customer-mode .line-total,
+      body.builder-mode .line-total{
+        display:block !important;
+        text-align:right;
+        white-space:nowrap;
+        font-weight:800;
+      }
+      .rate{color:var(--muted);font-size:13px;}
+      .line-total{color:var(--accent);font-size:15px;}
+      body.customer-mode .rate,
+      body.customer-mode .builder-only-inline{display:none !important;}
+      .item-name{font-size:15px;flex:1;}
+      .qty{min-width:130px;max-width:160px;}
+      .qty-btn{width:40px;font-size:20px;}
+      .qty input.qtyInput{font-size:16px;}
+    }
+    @media print{
+      body{background:#fff;color:#000;padding:0;}
+      .app{width:100%;}
+      .hero,.total-card,.note,.section{box-shadow:none;border-color:#ddd;background:#fff;color:#000;break-inside:avoid;}
+      .actions{display:none;}
+      input,select{border:1px solid #ddd;background:#fff;color:#000;}
+      .logo,button{background:#000;color:#fff;}
+      .total{color:#000;}
+      .total-box{border-color:#000;}
+      .section-header{border-bottom-color:#ddd;}
+      .item{border-bottom-color:#eee;}
+      .item-name strong{color:#000;}
+      .muted,.subtitle,.item-desc,.section p,.total-title,.small-total,label,.note{color:#444;}
+      .qty-btn{display:none;}
+    }
+  </style>
+</head>
+<body class="customer-mode">
+  <main class="app">
+    <a href="../index.html" style="display:inline-flex;align-items:center;gap:6px;color:#b7b7b7;font-size:13px;font-weight:700;text-decoration:none;margin-bottom:10px">← Back to dashboard</a>
+    <section class="hero">
+      <div class="brand">
+        <div class="logo">AC</div>
+        <div>
+          <h1>Electrical Quote Calculator</h1>
+          <p class="subtitle">Fast site checklist for electrical pricing. Customer mode hides internal pricing.</p>
+        </div>
+      </div>
+      <div class="grid-top">
+        <div>
+          <label for="project">Project / Address</label>
+          <input id="project" type="text" placeholder="e.g. Point Cook renovation" autocomplete="off" />
+        </div>
+        <div>
+          <label for="customer">Prepared For</label>
+          <input id="customer" type="text" placeholder="Customer name" autocomplete="off" />
+        </div>
+        <div>
+          <label for="mode">View Mode</label>
+          <select id="mode">
+            <option value="customer" selected>Customer Quote</option>
+            <option value="builder">Builder Price</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section class="summary">
+      <div class="total-card">
+        <div class="total-box">
+          <div class="total-title" id="totalTitle">Customer Quote Total inc GST</div>
+          <div class="total" id="grandTotal">$0.00</div>
+          <div class="small-total builder-only" id="builderBreakdown">Ex GST: $0.00 | GST: $0.00</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button type="button" id="printBtn">Print / Save PDF</button>
+        <button type="button" class="secondary" id="clearBtn">Clear Quantities</button>
+      </div>
+    </section>
+
+    <section class="note">
+      <span class="warning">Customer Quote mode:</span> adds a fixed 20% profit to the catalogue subtotal, then adds 10% GST. Internal builder pricing stays hidden.
+      <span class="builder-only"><br><br><span class="warning">Builder Price mode:</span> shows the base electrician price, GST and line totals for internal use.</span>
+    </section>
+
+    <section class="sections" id="itemsWrap">
+
+      <div class="section">
+        <div class="section-header"><div><h2>Lighting</h2><p>Downlights, wall lights, outdoor lights and light fittings.</p></div></div>
+        <div class="item" data-rate="65"><div class="item-row-top"><div><div class="item-name"><strong>LED Downlight</strong> - Supply, wiring &amp; install</div><div class="item-desc">9W tricolour LED downlight supplied and installed.</div></div><div class="rate builder-only-inline">$65 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button" aria-label="decrease">−</button><input class="qtyInput" type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" value="0"><button class="qty-btn qty-plus" type="button" aria-label="increase">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="45"><div class="item-row-top"><div><div class="item-name"><strong>LED Downlight</strong> - Install only</div><div class="item-desc">Client supplies the downlight, electrician wires and installs.</div></div><div class="rate builder-only-inline">$45 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button" aria-label="decrease">−</button><input class="qtyInput" type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" value="0"><button class="qty-btn qty-plus" type="button" aria-label="increase">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="160"><div class="item-row-top"><div><div class="item-name"><strong>Bathroom Wall Light</strong> - Install on tiles</div><div class="item-desc">Wall light supplied by client, installed on bathroom tiles.</div></div><div class="rate builder-only-inline">$160 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button" aria-label="decrease">−</button><input class="qtyInput" type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" value="0"><button class="qty-btn qty-plus" type="button" aria-label="increase">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="180"><div class="item-row-top"><div><div class="item-name"><strong>Outdoor Entrance Light</strong></div><div class="item-desc">Outdoor light at entrance, supplied by client.</div></div><div class="rate builder-only-inline">$180 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button" aria-label="decrease">−</button><input class="qtyInput" type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" value="0"><button class="qty-btn qty-plus" type="button" aria-label="increase">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="240"><div class="item-row-top"><div><div class="item-name"><strong>Shaving Cabinet Light</strong></div><div class="item-desc">Wiring and installation of shaving cabinet lights.</div></div><div class="rate builder-only-inline">$240 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button" aria-label="decrease">−</button><input class="qtyInput" type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" value="0"><button class="qty-btn qty-plus" type="button" aria-label="increase">+</button></div><div class="line-total">$0.00</div></div></div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><div><h2>Power Points</h2><p>Standard, replacement, weatherproof and extra switch power points.</p></div></div>
+        <div class="item" data-rate="65"><div class="item-row-top"><div><div class="item-name"><strong>Power Point</strong> - New wiring &amp; install</div><div class="item-desc">Clipsal 2000 power point, supplied, wired and installed.</div></div><div class="rate builder-only-inline">$65 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button" aria-label="decrease">−</button><input class="qtyInput" type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" value="0"><button class="qty-btn qty-plus" type="button" aria-label="increase">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="35"><div class="item-row-top"><div><div class="item-name"><strong>Power Point</strong> - Replacement / fit off</div><div class="item-desc">Replace existing Clipsal 2000 power point.</div></div><div class="rate builder-only-inline">$35 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button" aria-label="decrease">−</button><input class="qtyInput" type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" value="0"><button class="qty-btn qty-plus" type="button" aria-label="increase">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="75"><div class="item-row-top"><div><div class="item-name"><strong>Double Power Point</strong> with extra switch</div><div class="item-desc">Double power point with extra switches, Clipsal 2000.</div></div><div class="rate builder-only-inline">$75 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button" aria-label="decrease">−</button><input class="qtyInput" type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" value="0"><button class="qty-btn qty-plus" type="button" aria-label="increase">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="150"><div class="item-row-top"><div><div class="item-name"><strong>Weatherproof Power Point</strong></div><div class="item-desc">Outdoor/weatherproof power point supplied and installed.</div></div><div class="rate builder-only-inline">$150 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button" aria-label="decrease">−</button><input class="qtyInput" type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" value="0"><button class="qty-btn qty-plus" type="button" aria-label="increase">+</button></div><div class="line-total">$0.00</div></div></div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><div><h2>Switches &amp; Dimmers</h2><p>Light switches, gang switches and dimmers.</p></div></div>
+        <div class="item" data-rate="35"><div class="item-row-top"><div><div class="item-name"><strong>1 Gang Light Switch</strong> - Replacement</div><div class="item-desc">Supply, fit off and replacement, Clipsal 2000.</div></div><div class="rate builder-only-inline">$35 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button" aria-label="decrease">−</button><input class="qtyInput" type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" value="0"><button class="qty-btn qty-plus" type="button" aria-label="increase">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="65"><div class="item-row-top"><div><div class="item-name"><strong>1 Gang Light Switch</strong> - New wiring</div><div class="item-desc">Supply, wiring and installation, Clipsal 2000.</div></div><div class="rate builder-only-inline">$65 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button" aria-label="decrease">−</button><input class="qtyInput" type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" value="0"><button class="qty-btn qty-plus" type="button" aria-label="increase">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="40"><div class="item-row-top"><div><div class="item-name"><strong>2 Gang Light Switch</strong> - Replacement</div><div class="item-desc">Supply, fit off and replacement, Clipsal 2000.</div></div><div class="rate builder-only-inline">$40 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button" aria-label="decrease">−</button><input class="qtyInput" type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" value="0"><button class="qty-btn qty-plus" type="button" aria-label="increase">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="75"><div class="item-row-top"><div><div class="item-name"><strong>2 Gang Light Switch</strong> - New wiring</div><div class="item-desc">Supply, wiring and installation, Clipsal 2000.</div></div><div class="rate builder-only-inline">$75 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button" aria-label="decrease">−</button><input class="qtyInput" type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" value="0"><button class="qty-btn qty-plus" type="button" aria-label="increase">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="45"><div class="item-row-top"><div><div class="item-name"><strong>3 Gang Light Switch</strong> - Replacement</div><div class="item-desc">Supply, fit off and replacement, Clipsal 2000.</div></div><div class="rate builder-only-inline">$45 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button" aria-label="decrease">−</button><input class="qtyInput" type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" value="0"><button class="qty-btn qty-plus" type="button" aria-label="increase">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="85"><div class="item-row-top"><div><div class="item-name"><strong>3 Gang Light Switch</strong> - New wiring</div><div class="item-desc">Supply, wiring and installation, Clipsal 2000.</div></div><div class="rate builder-only-inline">$85 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button" aria-label="decrease">−</button><input class="qtyInput" type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" value="0"><button class="qty-btn qty-plus" type="button" aria-label="increase">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="65"><div class="item-row-top"><div><div class="item-name"><strong>4 Gang Light Switch</strong> - Replacement</div><div class="item-desc">Supply, fit off and replacement, Clipsal 2000.</div></div><div class="rate builder-only-inline">$65 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button" aria-label="decrease">−</button><input class="qtyInput" type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" value="0"><button class="qty-btn qty-plus" type="button" aria-label="increase">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="90"><div class="item-row-top"><div><div class="item-name"><strong>Rotary LED Dimmer</strong></div><div class="item-desc">Supply and installation of rotary LED dimmer.</div></div><div class="rate builder-only-inline">$90 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button" aria-label="decrease">−</button><input class="qtyInput" type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" value="0"><button class="qty-btn qty-plus" type="button" aria-label="increase">+</button></div><div class="line-total">$0.00</div></div></div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><div><h2>Bathroom &amp; Appliances</h2><p>Heated towel rails, bathroom combos, rangehood and oven-related work.</p></div></div>
+        <div class="item" data-rate="220"><div class="item-row-top"><div><div class="item-name"><strong>Electric Towel Heater</strong></div><div class="item-desc">Wiring and installation, towel heater supplied by client.</div></div><div class="rate builder-only-inline">$220 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button" aria-label="decrease">−</button><input class="qtyInput" type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" value="0"><button class="qty-btn qty-plus" type="button" aria-label="increase">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="85"><div class="item-row-top"><div><div class="item-name"><strong>Non-Electric Towel Rack</strong></div><div class="item-desc">Installation of non-electric towel rack.</div></div><div class="rate builder-only-inline">$85 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button" aria-label="decrease">−</button><input class="qtyInput" type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" value="0"><button class="qty-btn qty-plus" type="button" aria-label="increase">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="250"><div class="item-row-top"><div><div class="item-name"><strong>3-in-1 Fan / Heat / Light Combo</strong></div><div class="item-desc">Wiring and installation in bathroom, including controller on tiles.</div></div><div class="rate builder-only-inline">$250 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button" aria-label="decrease">−</button><input class="qtyInput" type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" value="0"><button class="qty-btn qty-plus" type="button" aria-label="increase">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="320"><div class="item-row-top"><div><div class="item-name"><strong>Rangehood Duct</strong></div><div class="item-desc">Supply and installation of duct work and outside vent.</div></div><div class="rate builder-only-inline">$320 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button" aria-label="decrease">−</button><input class="qtyInput" type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" value="0"><button class="qty-btn qty-plus" type="button" aria-label="increase">+</button></div><div class="line-total">$0.00</div></div></div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><div><h2>Data &amp; TV</h2><p>TV antenna and data points.</p></div></div>
+        <div class="item" data-rate="55"><div class="item-row-top"><div><div class="item-name"><strong>TV Antenna Point</strong></div><div class="item-desc">Supply, fit off and replacement of antenna TV point.</div></div><div class="rate builder-only-inline">$55 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button" aria-label="decrease">−</button><input class="qtyInput" type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" value="0"><button class="qty-btn qty-plus" type="button" aria-label="increase">+</button></div><div class="line-total">$0.00</div></div></div>
+        <div class="item" data-rate="55"><div class="item-row-top"><div><div class="item-name"><strong>Data Point</strong></div><div class="item-desc">Supply, fit off and replacement of data point.</div></div><div class="rate builder-only-inline">$55 ex GST</div></div><div class="item-row-bottom"><div class="qty"><button class="qty-btn qty-minus" type="button" aria-label="decrease">−</button><input class="qtyInput" type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" value="0"><button class="qty-btn qty-plus" type="button" aria-label="increase">+</button></div><div class="line-total">$0.00</div></div></div>
+      </div>
+
+    </section>
+    <div class="footer-space"></div>
+  </main>
+
+  <script>
+    (function(){
+      'use strict';
+
+      var GST_RATE = 0.10;
+      var CUSTOMER_PROFIT_RATE = 0.20;
+
+      function money(value){
+        var n = Number(value || 0);
+        return '$' + n.toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      }
+
+      function getQty(input){
+        var value = parseInt(input.value, 10);
+        if (isNaN(value) || value < 0) return 0;
+        return value;
+      }
+
+      function calculateTotals(){
+        var modeEl = document.getElementById('mode');
+        var mode = modeEl ? modeEl.value : 'customer';
+        var rows = document.querySelectorAll('.item');
+        var subtotalExGst = 0;
+
+        for (var i = 0; i < rows.length; i++){
+          var row = rows[i];
+          var rate = Number(row.getAttribute('data-rate') || 0);
+          var input = row.querySelector('.qtyInput');
+          var qty = input ? getQty(input) : 0;
+          var line = rate * qty;
+          subtotalExGst += line;
+
+          var lineBox = row.querySelector('.line-total');
+          if (lineBox) lineBox.textContent = money(line);
+        }
+
+        var quoteBaseExGst = subtotalExGst;
+        if (mode === 'customer' && subtotalExGst > 0){
+          quoteBaseExGst = subtotalExGst * (1 + CUSTOMER_PROFIT_RATE);
+        }
+
+        var gst = quoteBaseExGst * GST_RATE;
+        var totalIncGst = quoteBaseExGst + gst;
+
+        var grandTotal = document.getElementById('grandTotal');
+        var totalTitle = document.getElementById('totalTitle');
+        var builderBreakdown = document.getElementById('builderBreakdown');
+
+        if (grandTotal) grandTotal.textContent = money(totalIncGst);
+        if (totalTitle) totalTitle.textContent = mode === 'customer' ? 'Customer Quote Total inc GST' : 'Builder Price Total inc GST';
+        if (builderBreakdown) builderBreakdown.textContent = 'Ex GST: ' + money(quoteBaseExGst) + ' | GST: ' + money(gst);
+
+        document.body.classList.remove('customer-mode','builder-mode');
+        document.body.classList.add(mode === 'customer' ? 'customer-mode' : 'builder-mode');
+      }
+
+      function clearQuantities(){
+        var inputs = document.querySelectorAll('.qtyInput');
+        for (var i = 0; i < inputs.length; i++){
+          inputs[i].value = '0';
+        }
+        calculateTotals();
+      }
+
+      function printPage(){
+        calculateTotals();
+        setTimeout(function(){ window.print(); }, 50);
+      }
+
+      function applyAiPrefill(){
+        try{
+          var raw = localStorage.getItem('ac_ai_electrical_prefill_v1');
+          if (!raw) return;
+          var data = JSON.parse(raw);
+          var inputs = document.querySelectorAll('.item .qtyInput');
+          var quantities = data.quantities || [];
+          for (var i = 0; i < inputs.length; i++){
+            inputs[i].value = Math.max(0, parseInt(quantities[i] || 0, 10) || 0);
+          }
+          var project = document.getElementById('project');
+          var customer = document.getElementById('customer');
+          var mode = document.getElementById('mode');
+          if (project && data.project) project.value = data.project;
+          if (customer && data.customer) customer.value = data.customer;
+          if (mode && data.mode) mode.value = data.mode;
+          localStorage.removeItem('ac_ai_electrical_prefill_v1');
+        }catch(e){}
+      }
+
+      function attachEvents(){
+        // Qty text inputs
+        var inputs = document.querySelectorAll('.qtyInput');
+        for (var i = 0; i < inputs.length; i++){
+          inputs[i].addEventListener('input', calculateTotals, false);
+          inputs[i].addEventListener('change', calculateTotals, false);
+          inputs[i].addEventListener('blur', calculateTotals, false);
+        }
+
+        // +/− stepper buttons (event delegation on the whole doc)
+        document.addEventListener('click', function(e){
+          var btn = e.target;
+          if (!btn.classList.contains('qty-btn')) return;
+          var qtyWrap = btn.closest('.qty');
+          if (!qtyWrap) return;
+          var inp = qtyWrap.querySelector('.qtyInput');
+          if (!inp) return;
+          var v = getQty(inp);
+          if (btn.classList.contains('qty-plus')){
+            inp.value = v + 1;
+          } else {
+            inp.value = Math.max(0, v - 1);
+          }
+          calculateTotals();
+        }, false);
+
+        // touchend on stepper buttons for iOS
+        document.addEventListener('touchend', function(e){
+          var btn = e.target;
+          if (!btn.classList.contains('qty-btn')) return;
+          e.preventDefault();
+          var qtyWrap = btn.closest('.qty');
+          if (!qtyWrap) return;
+          var inp = qtyWrap.querySelector('.qtyInput');
+          if (!inp) return;
+          var v = getQty(inp);
+          if (btn.classList.contains('qty-plus')){
+            inp.value = v + 1;
+          } else {
+            inp.value = Math.max(0, v - 1);
+          }
+          calculateTotals();
+        }, false);
+
+        var mode = document.getElementById('mode');
+        if (mode){
+          mode.addEventListener('change', calculateTotals, false);
+        }
+
+        var clearBtn = document.getElementById('clearBtn');
+        if (clearBtn){
+          clearBtn.addEventListener('click', clearQuantities, false);
+        }
+
+        var printBtn = document.getElementById('printBtn');
+        if (printBtn){
+          printBtn.addEventListener('click', printPage, false);
+        }
+      }
+
+      if (document.readyState === 'loading'){
+        document.addEventListener('DOMContentLoaded', function(){ attachEvents(); applyAiPrefill(); calculateTotals(); }, false);
+      } else {
+        attachEvents();
+        applyAiPrefill();
+        calculateTotals();
+      }
+
+      window.ACQuoteCalculator = {
+        calculateTotals: calculateTotals,
+        clearQuantities: clearQuantities,
+        printPage: printPage
+      };
+    })();
+  </script>
+<script>
+window.ACProjectCapture = async function(){
+  var rows=Array.prototype.slice.call(document.querySelectorAll('.sections .item')),quantities=[],selected=[],base=0;
+  rows.forEach(function(row){var qty=Math.max(0,Number((row.querySelector('.qtyInput')||{}).value||0)),rate=Number(row.getAttribute('data-rate')||0),name=((row.querySelector('.item-name strong')||row.querySelector('.item-name')||{}).textContent||'Electrical item').trim();quantities.push(qty);if(qty>0){selected.push({name:name,quantity:qty,rate:rate,lineTotal:qty*rate});base+=qty*rate;}});
+  var mode=(document.getElementById('mode')||{}).value||'customer',project=(document.getElementById('project')||{}).value||'',customer=(document.getElementById('customer')||{}).value||'',builder=base*1.1,customerTotal=base>0?base*1.2*1.1:0,total=mode==='builder'?builder:customerTotal;
+  return{module:'electrical',title:(project?project+' — ':'')+'Electrical Estimate',summary:selected.length+' selected items • '+total.toLocaleString('en-AU',{style:'currency',currency:'AUD'}),data:{project:project,customer:customer,mode:mode,quantities:quantities,items:selected,builderTotalIncGst:builder,customerTotalIncGst:customerTotal}};
+};
+</script>
+<script src="../shared/project-store.js"></script>
+<script src="../shared/project-bridge.js"></script>
+</body>
+</html>
