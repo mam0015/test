@@ -30,12 +30,18 @@ CORRECT GITHUB ROOT AFTER UPLOAD:
   electrical/
   plumbing/
   cladding/
+  renovation-budget/
   plan-ai/
   quote-analysis/
   projects/
   shared/
   checklist/
   supabase/
+
+The Renovation Budget Planner is browser-based and does not use AI. It uses
+JavaScript because the website is hosted on GitHub Pages. Its drafts and saved
+project records remain on the current browser/device, like the existing
+Projects system. Use Export Backup and Restore Backup to move them.
 
 WRONG:
 

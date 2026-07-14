@@ -1,4 +1,4 @@
-const CACHE='ac-complete-ai-root-fix-v7';
+const CACHE='ac-renovation-budget-v8';
 const ASSETS=[
   './',
   './index.html',
@@ -8,6 +8,10 @@ const ASSETS=[
   './electrical/',
   './plumbing/',
   './cladding/',
+  './renovation-budget/',
+  './renovation-budget/index.html',
+  './renovation-budget/rates.js',
+  './renovation-budget/app.js',
   './plan-ai/',
   './plan-ai/index.html',
   './plan-ai/styles.css',

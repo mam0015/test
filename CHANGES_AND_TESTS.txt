@@ -1,3 +1,26 @@
+RENOVATION BUDGET PLANNER — 14 JULY 2026
+=========================================
+
+- Added a guided Renovation Budget Planner that does not use AI.
+- Added Full House, Bathroom, Kitchen, Bathroom + Kitchen, Laundry,
+  Living & Bedrooms, Exterior & Outdoor, and Custom / Multiple Areas.
+- Questions change automatically for the selected renovation areas.
+- Reused verified Electrical, Plumbing and Thermory Cladding prices from the
+  existing calculators.
+- Clearly labels other costs as planning allowances until AC invoices or
+  verified trade price lists are supplied.
+- Retains the existing 20% customer margin, then 10% GST calculation.
+- Adds finish levels, priorities, contingency and budget recommendations.
+- Adds Do Now, Do Later and Optional Upgrade lists.
+- Adds draft saving, Print / Save PDF, Save to Project and reopen/edit support.
+- Saving an edited estimate to the same project updates its existing record.
+- Kept the existing black, white and yellow Alert Construction theme.
+
+Validation completed:
+- JavaScript syntax, rate reuse, pricing formula and local link checks: pass.
+- Category, calculation, project save, update and reopen smoke tests: pass.
+
+
 COMPLETE AI FIX — CHANGES AND VALIDATION
 ========================================
 

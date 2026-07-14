@@ -15,7 +15,10 @@
     try{
       let projectId=select.value;const name=newName.value.trim();if(name)projectId=ACProjects.create({name}).id;if(!projectId)throw new Error('Select a project or enter a new project name.');
       const capture=await window.ACProjectCapture(),attachment=capture.attachment?await ACProjects.saveAttachment(projectId,capture.attachment):null;
-      ACProjects.addRecord(projectId,{module:capture.module,title:capture.title,summary:capture.summary,data:capture.data,attachmentId:attachment?.id||null,attachmentName:attachment?.name||''});ACProjects.setActive(projectId);close();toast('Saved to '+ACProjects.get(projectId).name);
+      let entry=null,updated=false;
+      if(capture.recordRef&&capture.recordRef.projectId===projectId&&capture.recordRef.recordId){entry=ACProjects.updateRecord(projectId,capture.recordRef.recordId,{title:capture.title,summary:capture.summary,data:capture.data});updated=!!entry}
+      if(!entry)entry=ACProjects.addRecord(projectId,{module:capture.module,title:capture.title,summary:capture.summary,data:capture.data,attachmentId:attachment?.id||null,attachmentName:attachment?.name||''});
+      ACProjects.setActive(projectId);if(typeof window.ACProjectSaved==='function')window.ACProjectSaved({projectId,recordId:entry.id,module:capture.module,updated});close();toast((updated?'Updated in ':'Saved to ')+ACProjects.get(projectId).name);
     }catch(error){alert(error.message||'The record could not be saved.')}
     finally{save.disabled=false;save.textContent='Save'}
   });

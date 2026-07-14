@@ -2,7 +2,7 @@
   'use strict';
   const $=id=>document.getElementById(id),store=window.ACProjects;
   let currentId=store.active()||store.list()[0]?.id||'';
-  const moduleInfo={electrical:['⚡','Electrical Estimate'],plumbing:['◉','Plumbing Estimate'],cladding:['▧','Cladding Estimate'],'plan-estimate':['▤','Plan Estimate'],'quote-analysis':['⌁','Quote Analysis'],'site-checklist':['✓','Site Visit'],document:['▣','Project File / Note'],general:['•','Project Record']};
+  const moduleInfo={electrical:['⚡','Electrical Estimate'],plumbing:['◉','Plumbing Estimate'],cladding:['▧','Cladding Estimate'],'renovation-budget':['⌂','Renovation Budget Plan'],'plan-estimate':['▤','Plan Estimate'],'quote-analysis':['⌁','Quote Analysis'],'site-checklist':['✓','Site Visit'],document:['▣','Project File / Note'],general:['•','Project Record']};
   function esc(value){return String(value==null?'':value).replace(/[&<>"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[char]))}
   function dateText(value){if(!value)return'No date';const d=new Date(value+'T00:00:00');return Number.isNaN(d.getTime())?value:d.toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'})}
   function toast(message){const el=document.createElement('div');el.className='toast';el.textContent=message;document.body.appendChild(el);setTimeout(()=>el.remove(),2600)}
@@ -70,6 +70,7 @@
     if(record.module==='plan-estimate'){const trade=data.trade||'electrical',key={electrical:'ac_ai_electrical_prefill_v1',plumbing:'ac_ai_plumbing_prefill_v1',cladding:'ac_ai_cladding_prefill_v1'}[trade],items=data.items||[],length={electrical:23,plumbing:25,cladding:11}[trade],quantities=Array(length).fill(0);items.forEach(item=>{if(item.catalog_index>=0&&item.catalog_index<length)quantities[item.catalog_index]=item.quantity});localStorage.setItem(key,JSON.stringify({quantities,project:project.name,mode:'customer',createdAt:new Date().toISOString()}));location.href='../'+trade+'/index.html';return}
     if(record.module==='quote-analysis'){localStorage.setItem('ac_project_quote_restore_v1',JSON.stringify({trade:data.trade||'electrical',result:data.result,items:data.items}));location.href='../quote-analysis/index.html';return}
     if(record.module==='site-checklist'){localStorage.setItem('ac_project_checklist_restore_v1',JSON.stringify(data.state||{}));location.href='../checklist/index.html';return}
+    if(record.module==='renovation-budget'){localStorage.setItem('ac_project_renovation_restore_v1',JSON.stringify({state:data.state||data,projectId:project.id,recordId:record.id}));location.href='../renovation-budget/index.html';return}
     alert(record.summary||'The record is saved in this project.');
   }
   function renderTasks(project){
