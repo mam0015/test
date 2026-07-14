@@ -312,7 +312,11 @@ window.ACProjectCapture = async function(){
   return {module:"site-checklist",title:(state.fields.projectName || "Site Visit")+" — "+(state.fields.visitDate || new Date().toLocaleDateString("en-AU")),summary:completed+" of "+total+" checklist items complete",data:{state:JSON.parse(JSON.stringify(state)),completed:completed,total:total}};
 };
 </script>
+<script src="../shared/platform-config.js"></script>
+<script src="../shared/auth.js"></script>
 <script src="../shared/project-store.js"></script>
 <script src="../shared/project-bridge.js"></script>
+<script src="../shared/product-shell.js"></script>
+<script src="../shared/cloud-sync.js"></script>
 </body>
 </html>

@@ -49,7 +49,7 @@ function domFor(html){
   projects.window.document.querySelector('#newName').value='Smoke Test Project';
   projects.window.document.querySelector('#projectModal .modal-save').click();
   if(!projects.window.document.body.textContent.includes('Smoke Test Project'))throw new Error('Project could not be saved locally');
-  if(!projects.window.document.querySelector('.storage-note').textContent.includes('browser and device only'))throw new Error('Local-only storage warning is missing');
+  if(!projects.window.document.querySelector('.storage-note').textContent.includes('secure team sync'))throw new Error('Cloud-sync storage notice is missing');
 
   const renovation=domFor('renovation-budget/index.html');
   renovation.window.eval(read('renovation-budget/rates.js'));

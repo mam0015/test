@@ -75,7 +75,11 @@
 
   async function callFunction(body){
     if(!config.functionUrl)throw new Error('The AI connection has not been activated yet.');
-    const response=await fetch(config.functionUrl,{method:'POST',headers:{'Content-Type':'application/json','apikey':config.publishableKey||''},body:JSON.stringify(body)});
+    const platform=window.AC_PLATFORM_CONFIG||{};
+    if(window.ACPriceCatalogue){await window.ACPriceCatalogue.ready;window.ACPriceCatalogue.applyToCatalogues(CATALOGS)}
+    if(platform.requireLoginForAI&&window.ACAuth){await window.ACAuth.ready;if(!window.ACAuth.isSignedIn())throw new Error('Sign in from the Account button before using AI plan analysis.')}
+    const authHeaders=window.ACAuth?await window.ACAuth.headers():{};
+    const response=await fetch(config.functionUrl,{method:'POST',headers:{'Content-Type':'application/json','apikey':config.publishableKey||'',...authHeaders},body:JSON.stringify(body)});
     const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||`AI service error (${response.status}).`);return data;
   }
 
@@ -120,8 +124,8 @@
     (analysis.items||[]).forEach(item=>{
       const index=Number(item.catalog_index);if(!Number.isInteger(index)||index<0||index>=catalog.items.length)return;
       const raw=Math.max(0,Number(item.quantity)||0);const quantity=catalog.decimal?Math.round(raw*100)/100:Math.round(raw);if(!quantity)return;
-      if(merged.has(index)){const old=merged.get(index);old.quantity+=quantity;old.evidence=[old.evidence,item.evidence].filter(Boolean).join(' / ')}
-      else merged.set(index,{catalog_index:index,quantity,evidence:item.evidence||'Visible in the selected trade plan.'});
+      if(merged.has(index)){const old=merged.get(index);old.quantity+=quantity;old.evidence=[old.evidence,item.evidence].filter(Boolean).join(' / ');if(item.confidence==='low')old.confidence='low';else if(item.confidence==='medium'&&old.confidence==='high')old.confidence='medium'}
+      else merged.set(index,{catalog_index:index,quantity,evidence:item.evidence||'Visible in the selected trade plan.',confidence:['high','medium','low'].includes(item.confidence)?item.confidence:'low'});
     });
     state.items=Array.from(merged.values()).sort((a,b)=>a.catalog_index-b.catalog_index);
     if(!state.items.length)return renderMissing();
@@ -138,8 +142,8 @@
 
   function createResultCard(analysis){
     const catalog=current(),card=document.createElement('section');card.className='result-card';card.dataset.resultTrade=state.trade;
-    cardData.set(card,{trade:state.trade,items:state.items.map(item=>({...item}))});
-    const rows=state.items.map((item,index)=>{const product=catalog.items[item.catalog_index],step=catalog.decimal?'0.01':'1';return `<div class="detected-row" data-item="${index}"><div class="detected-name"><strong>${esc(product[0])}</strong><small>${esc(item.evidence)}</small></div><div class="quantity"><button type="button" data-step="-${step}">−</button><input type="number" min="0" step="${step}" value="${item.quantity}" aria-label="Quantity"><button type="button" data-step="${step}">+</button></div><div class="line-price">${money(product[1]*item.quantity)}</div></div>`}).join('');
+    const initial=state.items.map(item=>({...item}));cardData.set(card,{trade:state.trade,items:initial.map(item=>({...item})),originalItems:initial,analysis:JSON.parse(JSON.stringify(analysis||{})),responseId:state.responseId,generatedAt:new Date().toISOString()});
+    const rows=state.items.map((item,index)=>{const product=catalog.items[item.catalog_index],step=catalog.decimal?'0.01':'1';return `<div class="detected-row" data-item="${index}"><div class="detected-name"><strong>${esc(product[0])}</strong><small><span class="line-confidence ${esc(item.confidence)}">${esc(item.confidence)} confidence</span>${esc(item.evidence)}</small></div><div class="quantity"><button type="button" data-step="-${step}">−</button><input type="number" min="0" step="${step}" value="${item.quantity}" aria-label="Quantity"><button type="button" data-step="${step}">+</button></div><div class="line-price">${money(product[1]*item.quantity)}</div></div>`}).join('');
     const assumptions=(analysis.assumptions||[]).map(x=>`<li>${esc(x)}</li>`).join('')||'<li>No additional assumptions listed.</li>';
     const warnings=[...(analysis.warnings||[]),...(analysis.unpriced_items||[]).map(x=>`Unpriced: ${x}`)].map(x=>`<li>${esc(x)}</li>`).join('')||'<li>Confirm all quantities with the Builder and relevant trade.</li>';
     const method=analysis.method==='fast'?'Fast Vision':'Smart Review';const confidence=analysis.confidence||(analysis.method==='fast'?'Medium — check every count':'Higher — still requires trade review');
@@ -157,7 +161,7 @@
   function transferToCalculator(card){const data=cardData.get(card),catalog=CATALOGS[data.trade],quantities=Array(catalog.items.length).fill(0);data.items.forEach(item=>quantities[item.catalog_index]=item.quantity);localStorage.setItem(catalog.storage,JSON.stringify({quantities,project:state.file?state.file.name.replace(/\.[^.]+$/,''):`AI ${catalog.label} Estimate`,mode:'customer',createdAt:new Date().toISOString()}));window.location.href=catalog.path}
   window.ACProjectCapture=async function(){
     const cards=document.querySelectorAll('.result-card'),card=cards[cards.length-1];if(!card)throw new Error('Complete a plan estimate before saving it.');
-    const saved=cardData.get(card),totals=totalsFor(card),analysis=state.analysis||{},name=state.file?state.file.name.replace(/\.[^.]+$/,''):'Plan';
-    return{module:'plan-estimate',title:name+' — '+CATALOGS[saved.trade].label+' Plan Estimate',summary:saved.items.length+' priced items • '+money(totals.builder)+' builder total',attachment:state.file,data:{trade:saved.trade,method:analysis.method||state.method,items:saved.items,analysis:analysis,builderTotalIncGst:totals.builder,customerTotalIncGst:totals.customer}};
+    const saved=cardData.get(card),totals=totalsFor(card),analysis=saved.analysis||{},name=state.file?state.file.name.replace(/\.[^.]+$/,''):'Plan',changes=saved.items.map((item,index)=>({catalog_index:item.catalog_index,from:saved.originalItems[index]?.quantity,to:item.quantity})).filter(item=>item.from!==item.to);
+    return{module:'plan-estimate',title:name+' — '+CATALOGS[saved.trade].label+' Plan Estimate',summary:saved.items.length+' priced items • '+money(totals.builder)+' builder total',attachment:state.file,data:{trade:saved.trade,method:analysis.method||state.method,items:saved.items,analysis:analysis,builderTotalIncGst:totals.builder,customerTotalIncGst:totals.customer,audit:{generatedAt:saved.generatedAt,responseId:saved.responseId,generatedBy:window.ACAuth?.user()?.email||'Local user',originalItems:saved.originalItems,humanChanges:changes,savedAt:new Date().toISOString()}}};
   };
 })();

@@ -1,3 +1,37 @@
+PRODUCT FOUNDATION & CLIENT ROADMAP — 14 JULY 2026
+==================================================
+
+- Added secure Supabase email/password accounts.
+- Added Owner, Office/Estimator and Site Supervisor roles.
+- Added private team joining codes and Owner role management.
+- Locked internal tools and AI features behind sign-in.
+- Added a Row Level Security database migration.
+- Added local-first project sync across authorised devices.
+- Added automatic cloud workspace version history.
+- Added a live company price catalogue with role-limited editing.
+- Added price change history and private cloud rate overrides.
+- Connected calculators and AI tools to the live catalogue runtime.
+- Added AI line confidence, original output and human-change audit data.
+- Added audit summaries to saved Project records.
+- Added optional daylight/high-contrast mode without replacing the theme.
+- Added item search, confirm-before-clear and seven-second Undo.
+- Added first-run onboarding and a safe sample project.
+- Added meta description and Open Graph link metadata.
+- Expanded the PWA cache and added an offline fallback page.
+- Retained deterministic, non-AI renovation budgeting and its missing-rate list.
+
+Deployment required:
+- Run supabase/migrations/20260714_product_foundation.sql.
+- Deploy the included analyse-plan Edge Function.
+- Create the first Owner account and assign team roles.
+
+Known boundary:
+- Project metadata syncs centrally; large IndexedDB attachments remain on the
+  originating browser and are included in manual Export Backup.
+- Original static fallback rates remain for backwards-compatible offline use;
+  future catalogue overrides are private and versioned.
+
+
 RENOVATION BUDGET PLANNER — 14 JULY 2026
 =========================================
 

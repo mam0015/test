@@ -10,6 +10,8 @@
   const esc=value=>String(value==null?'':value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   const number=value=>Math.max(0,Number(value)||0);
   const yes=value=>String(value)==='yes';
+  function syncLiveRates(){if(!window.ACPriceCatalogue)return;['electrical','plumbing','cladding'].forEach(trade=>Object.values(R.verified[trade]||{}).forEach((item,index)=>{item.rate=window.ACPriceCatalogue.effectiveRate(trade,index,item.rate)}));Object.entries(R.allowances).forEach(([group,items])=>Object.entries(items).forEach(([key,item])=>{const row=window.ACPriceCatalogue.list().find(value=>value.item_key===`renovation:${group}:${key}`);if(row)item.rate=Number(row.builder_rate)}))}
+  if(window.ACPriceCatalogue){window.ACPriceCatalogue.ready.then(syncLiveRates);window.addEventListener('ac-catalogue-changed',syncLiveRates)}
 
   const categories=[
     {id:'full-house',icon:'⌂',name:'Full House Renovation',description:'Kitchen, bathrooms, laundry, interiors, exterior and project costs.',scopes:['bathroom','kitchen','laundry','interior','exterior','project']},
@@ -188,6 +190,7 @@
 
   function readAnswer(id){return state.answers[id]}
   function buildLines(qualityOverride){
+    syncLiveRates();
     const quality=qualityOverride||state.project.quality||'standard',qualityFactor=R.qualityMultipliers[quality]||1,lines=[];
     const priority=scope=>state.priorities[scope]||defaultPriority(scope);
     function add(scope,trade,item,qty,source,options={}){

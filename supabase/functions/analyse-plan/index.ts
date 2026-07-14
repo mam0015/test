@@ -45,7 +45,7 @@ const TRADE_CONFIG:Record<string,TradeConfig>={
 const PLAN_SCHEMA={type:"object",additionalProperties:false,properties:{
   status:{type:"string",enum:["success","missing_trade_plan"]},
   summary:{type:"string"},
-  items:{type:"array",items:{type:"object",additionalProperties:false,properties:{catalog_index:{type:"integer",minimum:0},quantity:{type:"number",minimum:0},evidence:{type:"string"}},required:["catalog_index","quantity","evidence"]}},
+  items:{type:"array",items:{type:"object",additionalProperties:false,properties:{catalog_index:{type:"integer",minimum:0},quantity:{type:"number",minimum:0},confidence:{type:"string",enum:["high","medium","low"]},evidence:{type:"string"}},required:["catalog_index","quantity","confidence","evidence"]}},
   assumptions:{type:"array",items:{type:"string"}},warnings:{type:"array",items:{type:"string"}},unpriced_items:{type:"array",items:{type:"string"}}
 },required:["status","summary","items","assumptions","warnings","unpriced_items"]};
 
@@ -84,6 +84,18 @@ function filePart(body:any){
 
 function catalogueText(trade:TradeConfig){return trade.catalog.map((item,index)=>`${index} | ${item.name} | ${item.rate.toFixed(2)} ex GST`).join("\n")}
 
+async function liveTrade(request:Request,tradeKey:string,baseTrade:TradeConfig){
+  const url=Deno.env.get("SUPABASE_URL"),apikey=request.headers.get("apikey")||Deno.env.get("SUPABASE_ANON_KEY")||"",authorization=request.headers.get("authorization")||"";
+  if(!url||!apikey||!authorization)return baseTrade;
+  try{
+    const response=await fetch(`${url}/rest/v1/price_catalogue?trade=eq.${encodeURIComponent(tradeKey)}&active=eq.true&select=sort_order,item_name,builder_rate&order=sort_order`,{headers:{apikey,authorization}});
+    if(!response.ok)return baseTrade;
+    const catalogue=baseTrade.catalog.map(item=>({...item}));
+    for(const row of await response.json())if(Number.isInteger(Number(row.sort_order))&&catalogue[Number(row.sort_order)])catalogue[Number(row.sort_order)]={name:String(row.item_name||catalogue[Number(row.sort_order)].name),rate:Number(row.builder_rate)};
+    return{...baseTrade,catalog:catalogue};
+  }catch(_){return baseTrade}
+}
+
 async function analysePlan(apiKey:string,model:string,trade:TradeConfig,body:any){
   const scanMode=body.scanMode==="smart"?"smart":"fast";
   const modeInstruction=scanMode==="smart"
@@ -108,7 +120,7 @@ Trade rules: ${trade.rules}
 Fixed Alert Construction catalogue. The first number is catalog_index and the final number is the fixed ex-GST rate:
 ${catalogueText(trade)}
 
-Only matched catalogue items belong in items. Put other visible scope in unpriced_items. Never change rates. Include page, room/zone, symbol/legend label or dimension evidence for every quantity. If the symbol is unclear, do not guess: add a warning and leave it unpriced.
+Only matched catalogue items belong in items. Put other visible scope in unpriced_items. Never change rates. Include page, room/zone, symbol/legend label or dimension evidence for every quantity. Assign high, medium or low confidence to every priced line. If the symbol is unclear, do not guess: add a warning and leave it unpriced.
 
 User request: ${String(body.question||`Calculate the ${trade.label} work from this plan.`).slice(0,3000)}`;
   const data=await callOpenAI(apiKey,{model,reasoning:{effort:scanMode==="smart"?"high":"low"},input:[{role:"user",content:[filePart(body),{type:"input_text",text:prompt}]}],text:{format:{type:"json_schema",name:"trade_plan_estimate",strict:true,schema:PLAN_SCHEMA}},store:true,max_output_tokens:scanMode==="smart"?6500:4500});
@@ -158,7 +170,7 @@ Return quote totals on both ex-GST and inc-GST bases when the document supports 
   const data=await callOpenAI(apiKey,{model,reasoning:{effort:"high"},input:[{role:"user",content:[filePart(body),{type:"input_text",text:prompt}]}],text:{format:{type:"json_schema",name:"trade_quote_extraction",strict:true,schema:QUOTE_SCHEMA}},store:false,max_output_tokens:6500});
   const extracted=JSON.parse(outputText(data)),analysis:any=normaliseQuote(extracted,trade);
   analysis.market_review={summary:"Compared only with the fixed Alert Construction catalogue. Edit any uncertain match before use.",sources:[]};
-  return{analysis};
+  return{analysis,responseId:data.id};
 }
 
 async function processRequest(request:Request){
@@ -166,7 +178,8 @@ async function processRequest(request:Request){
   if(request.method!=="POST")return json({error:"Method not allowed."},405,origin);
   const apiKey=Deno.env.get("OPENAI_API_KEY");if(!apiKey)return json({error:"Review service is not configured."},503,origin);
   try{
-    const body=await request.json(),trade=TRADE_CONFIG[body.trade];if(!trade)return json({error:"Select Electrical, Plumbing or Cladding."},400,origin);
+    const body=await request.json(),baseTrade=TRADE_CONFIG[body.trade];if(!baseTrade)return json({error:"Select Electrical, Plumbing or Cladding."},400,origin);
+    const trade=await liveTrade(request,String(body.trade),baseTrade);
     const model=Deno.env.get("OPENAI_MODEL")||"gpt-5.6";
     if(body.mode==="question"){
       if(!body.previousResponseId||!body.question)return json({error:"A completed plan analysis and question are required."},400,origin);
@@ -190,6 +203,7 @@ const authenticatedFetch=withSupabase({auth:["publishable","secret"]},async(requ
   // Public browser calls must come from the deployed Alert Construction origin.
   // Secret-key server calls may omit Origin for controlled testing and automation.
   if(String(ctx.authMode).startsWith("publishable")&&!origin)return json({error:"Origin required."},403,origin);
+  if(String(ctx.authMode).startsWith("publishable")&&!/^Bearer\s+ey/i.test(request.headers.get("authorization")||""))return json({error:"Sign in before using AI analysis."},401,origin);
   return processRequest(request);
 });
 

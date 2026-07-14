@@ -15,7 +15,7 @@
   };
 
   const config=window.AC_PLAN_AI_CONFIG||{};
-  const state={trade:'electrical',file:null,fileData:null,busy:false,result:null,items:[],elapsedTimer:null,progressTimer:null,startTime:0};
+  const state={trade:'electrical',file:null,fileData:null,busy:false,result:null,items:[],originalItems:[],responseId:null,generatedAt:null,elapsedTimer:null,progressTimer:null,startTime:0};
   const $=id=>document.getElementById(id);
   let errorTimer;
 
@@ -70,7 +70,11 @@
 
   async function callFunction(body){
     if(!config.functionUrl)throw new Error('The quote review connection has not been configured.');
-    const response=await fetch(config.functionUrl,{method:'POST',headers:{'Content-Type':'application/json','apikey':config.publishableKey||''},body:JSON.stringify(body)});
+    const platform=window.AC_PLATFORM_CONFIG||{};
+    if(window.ACPriceCatalogue){await window.ACPriceCatalogue.ready;window.ACPriceCatalogue.applyToCatalogues(CATALOGS)}
+    if(platform.requireLoginForAI&&window.ACAuth){await window.ACAuth.ready;if(!window.ACAuth.isSignedIn())throw new Error('Sign in from the Account button before using AI quote analysis.')}
+    const authHeaders=window.ACAuth?await window.ACAuth.headers():{};
+    const response=await fetch(config.functionUrl,{method:'POST',headers:{'Content-Type':'application/json','apikey':config.publishableKey||'',...authHeaders},body:JSON.stringify(body)});
     const data=await response.json().catch(()=>({}));
     if(!response.ok)throw new Error(data.error||`Review service error (${response.status}).`);
     return data;
@@ -84,15 +88,18 @@
       const data=await callFunction({mode:'quote',trade:state.trade,fileData:state.fileData,fileName:state.file.name,fileType:inferFileType(state.file)});
       if(!data.analysis||!Array.isArray(data.analysis.items))throw new Error('The quote result was incomplete. Please try again.');
       state.result=data.analysis;
+      state.responseId=data.responseId||null;state.generatedAt=new Date().toISOString();
       state.items=data.analysis.items.map(item=>({
         quoted_name:String(item.quoted_name||'Quoted item'),
         description:String(item.description||''),
         quantity:Math.max(0,Number(item.quantity)||0),
         quoted_line_total_ex_gst:Math.max(0,Number(item.quoted_line_total_ex_gst)||0),
         catalog_index:Number.isInteger(Number(item.catalog_index))?Number(item.catalog_index):-1,
+        match_confidence:['high','medium','low','none'].includes(item.match_confidence)?item.match_confidence:'none',
         evidence:String(item.evidence||''),
         notes:String(item.notes||'')
       }));
+      state.originalItems=JSON.parse(JSON.stringify(state.items));
       finishProgress();renderResults();
     }catch(error){stopProgress();showError(error.message||'The quote could not be reviewed.');}
     finally{setBusy(false)}
@@ -122,7 +129,7 @@
     const row=document.createElement('tr');row.dataset.index=index;
     const options=['<option value="-1">No reliable match</option>'].concat(catalog().items.map((product,i)=>`<option value="${i}" ${i===item.catalog_index?'selected':''}>${esc(product[0])} — ${money(product[1])}</option>`)).join('');
     const step=catalog().decimal?'0.01':'1';
-    row.innerHTML=`<td class="quoted-name">${esc(item.quoted_name)}<small>${esc([item.description,item.evidence].filter(Boolean).join(' • '))}</small></td><td><select class="match" aria-label="Matched AC item">${options}</select></td><td style="width:86px"><input class="quantity" type="number" min="0" step="${step}" value="${item.quantity}" aria-label="Quantity"></td><td style="width:145px"><input class="quoted-line" type="number" min="0" step=".01" value="${round(item.quoted_line_total_ex_gst)}" aria-label="Quoted line total ex GST"></td><td class="money-cell ac-line">$0.00</td><td class="money-cell difference">$0.00</td><td><span class="line-status unmatched">NEED REVIEW</span></td>`;
+    row.innerHTML=`<td class="quoted-name">${esc(item.quoted_name)}<small><b class="confidence-tag ${esc(item.match_confidence)}">${esc(item.match_confidence)} confidence</b>${esc([item.description,item.evidence].filter(Boolean).join(' • '))}</small></td><td><select class="match" aria-label="Matched AC item">${options}</select></td><td style="width:86px"><input class="quantity" type="number" min="0" step="${step}" value="${item.quantity}" aria-label="Quantity"></td><td style="width:145px"><input class="quoted-line" type="number" min="0" step=".01" value="${round(item.quoted_line_total_ex_gst)}" aria-label="Quoted line total ex GST"></td><td class="money-cell ac-line">$0.00</td><td class="money-cell difference">$0.00</td><td><span class="line-status unmatched">NEED REVIEW</span></td>`;
     row.querySelector('.match').addEventListener('change',event=>{item.catalog_index=Number(event.target.value);recalculate()});
     row.querySelector('.quantity').addEventListener('input',event=>{const value=Math.max(0,Number(event.target.value)||0);item.quantity=catalog().decimal?round(value):Math.round(value);recalculate()});
     row.querySelector('.quoted-line').addEventListener('input',event=>{item.quoted_line_total_ex_gst=Math.max(0,Number(event.target.value)||0);recalculate()});
@@ -166,14 +173,15 @@
   }
 
   function resetAll(){
+    if(state.result&&!confirm('Check another quote? The current unsaved analysis will be cleared.'))return;
     stopProgress();state.result=null;state.items=[];$('results').classList.remove('show');clearFile();window.scrollTo({top:0,behavior:'smooth'});
   }
   window.ACProjectCapture=async function(){
     if(!state.result||!state.items.length)throw new Error('Complete a quote analysis before saving it.');
-    const name=state.file?state.file.name.replace(/\.[^.]+$/,''):'Trade Quote',verdict=$('verdictBadge').textContent||'Price review';
-    return{module:'quote-analysis',title:name+' — '+catalog().label+' Quote Analysis',summary:verdict+' • '+$('quotedTotal').textContent,attachment:state.file,data:{trade:state.trade,result:state.result,items:state.items}};
+    const name=state.file?state.file.name.replace(/\.[^.]+$/,''):'Trade Quote',verdict=$('verdictBadge').textContent||'Price review',changes=state.items.map((item,index)=>{const original=state.originalItems[index]||{};const changed={line:index,quoted_name:item.quoted_name,fields:{}};['catalog_index','quantity','quoted_line_total_ex_gst'].forEach(field=>{if(item[field]!==original[field])changed.fields[field]={from:original[field],to:item[field]}});return changed}).filter(change=>Object.keys(change.fields).length);
+    return{module:'quote-analysis',title:name+' — '+catalog().label+' Quote Analysis',summary:verdict+' • '+$('quotedTotal').textContent,attachment:state.file,data:{trade:state.trade,result:state.result,items:state.items,audit:{generatedAt:state.generatedAt,responseId:state.responseId,generatedBy:window.ACAuth?.user()?.email||'Local user',originalItems:state.originalItems,humanChanges:changes,savedAt:new Date().toISOString()}}};
   };
   (function restoreSavedAnalysis(){
-    try{const raw=localStorage.getItem('ac_project_quote_restore_v1');if(!raw)return;const saved=JSON.parse(raw);localStorage.removeItem('ac_project_quote_restore_v1');if(!CATALOGS[saved.trade]||!saved.result||!Array.isArray(saved.items))return;state.trade=saved.trade;state.result=saved.result;state.items=saved.items;document.querySelectorAll('.trade').forEach(button=>button.classList.toggle('active',button.dataset.trade===state.trade));renderResults()}catch(_){}
+    try{const raw=localStorage.getItem('ac_project_quote_restore_v1');if(!raw)return;const saved=JSON.parse(raw);localStorage.removeItem('ac_project_quote_restore_v1');if(!CATALOGS[saved.trade]||!saved.result||!Array.isArray(saved.items))return;state.trade=saved.trade;state.result=saved.result;state.items=saved.items;state.originalItems=JSON.parse(JSON.stringify(saved.audit?.originalItems||saved.items));state.generatedAt=saved.audit?.generatedAt||null;state.responseId=saved.audit?.responseId||null;document.querySelectorAll('.trade').forEach(button=>button.classList.toggle('active',button.dataset.trade===state.trade));renderResults()}catch(_){}
   })();
 })();

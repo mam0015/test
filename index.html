@@ -4,6 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#050505">
+  <meta name="description" content="Alert Construction — secure estimating, renovation budgeting, project tracking, price catalogues and site tools in one connected workspace.">
+  <meta property="og:title" content="Alert Construction | Your Building Clinic">
+  <meta property="og:description" content="Estimating, projects, schedules, price catalogues and site tools for Alert Construction.">
+  <meta property="og:type" content="website">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Alert Construction | Your Building Clinic</title>
@@ -165,6 +169,13 @@
             <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span>
           </a>
 
+          <a class="tool" href="./catalogue/index.html" data-tool="catalogue">
+            <div class="tool-icon"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M12 10h40v44H12z"></path><path d="M20 21h24M20 31h24M20 41h13"></path><path d="M43 38v12M37 44h12"></path></svg></div>
+            <h2>Live Price<br>Catalogue</h2>
+            <p>Update company rates and add new trade items without changing the code.</p>
+            <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span>
+          </a>
+
           <a class="tool" href="./checklist/index.html" data-tool="checklist">
             <div class="tool-icon"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M20 10h24l8 8v38H12V10z"></path><path d="M24 10c0-5 3-7 8-7s8 2 8 7"></path><path d="m20 28 4 4 7-8"></path><path d="M35 28h10"></path><path d="m20 41 4 4 7-8"></path><path d="M35 41h10"></path></svg></div>
             <h2>Site Supervisor<br>Checklist</h2>
@@ -177,6 +188,8 @@
 
     <footer class="footer"><strong>Alert Construction</strong><span>Your Building Clinic</span></footer>
   </div>
+  <script src="./shared/platform-config.js"></script>
+  <script src="./shared/auth.js"></script>
   <script src="./shared/project-store.js"></script>
   <script>
     if (window.ACProjects) {
@@ -188,9 +201,8 @@
         alertBox.classList.add('show');
       }
     }
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function(){ navigator.serviceWorker.register('./sw.js').catch(function(){}); });
-    }
   </script>
+  <script src="./shared/product-shell.js"></script>
+  <script src="./shared/cloud-sync.js"></script>
 </body>
 </html>

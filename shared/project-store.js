@@ -50,6 +50,8 @@
   function dueTasks(date=today()){return list().flatMap(project=>(project.tasks||[]).filter(task=>!task.done&&task.dueDate<=date).map(task=>({...clean(task),projectId:project.id,projectName:project.name,overdue:task.dueDate<date}))).sort((a,b)=>(a.dueDate+a.dueTime).localeCompare(b.dueDate+b.dueTime))}
   function active(){return localStorage.getItem(ACTIVE_KEY)||''}
   function setActive(id){if(id)localStorage.setItem(ACTIVE_KEY,id);else localStorage.removeItem(ACTIVE_KEY);global.dispatchEvent(new CustomEvent('ac-active-project-changed',{detail:{id}}))}
+  function snapshot(){return clean(read())}
+  function replaceSnapshot(value){const next={version:1,projects:Array.isArray(value?.projects)?clean(value.projects):[]};write(next);return snapshot()}
 
   function db(){
     return new Promise((resolve,reject)=>{const request=indexedDB.open(DB_NAME,DB_VERSION);request.onupgradeneeded=()=>{const database=request.result;if(!database.objectStoreNames.contains(STORE)){const store=database.createObjectStore(STORE,{keyPath:'id'});store.createIndex('projectId','projectId',{unique:false})}};request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error)})
@@ -71,5 +73,5 @@
     write({version:1,projects:backup.data.projects});for(const item of backup.attachments||[]){const database=await db(),entry={...item,bytes:dataUrlToBytes(item.data)};delete entry.data;await new Promise((resolve,reject)=>{const request=database.transaction(STORE,'readwrite').objectStore(STORE).put(entry);request.onsuccess=()=>resolve();request.onerror=()=>reject(request.error)});database.close()}return backup.data.projects.length;
   }
 
-  global.ACProjects={list,get,create,update,remove,addRecord,updateRecord,deleteRecord,addTask,updateTask,deleteTask,dueTasks,today,active,setActive,saveAttachment,getAttachment,listAttachments,deleteAttachment,exportAll,importAll};
+  global.ACProjects={list,get,create,update,remove,addRecord,updateRecord,deleteRecord,addTask,updateTask,deleteTask,dueTasks,today,active,setActive,snapshot,replaceSnapshot,saveAttachment,getAttachment,listAttachments,deleteAttachment,exportAll,importAll};
 })(window);
