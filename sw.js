@@ -1,4 +1,4 @@
-const CACHE='ac-property-value-v11';
+const CACHE='ac-optional-team-code-v12';
 const ASSETS=[
   './','./index.html','./offline.html','./manifest.webmanifest',
   './assets/alert-construction-logo-white.svg','./assets/app-icon.svg',

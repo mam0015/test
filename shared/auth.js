@@ -23,7 +23,7 @@
     const type=params.get('type')||'';if(type)sessionStorage.setItem('ac_auth_redirect_type',type);history.replaceState(null,'',location.pathname+location.search);return type;
   }
   async function signIn(email,password){const data=await request('/auth/v1/token?grant_type=password',{method:'POST',body:JSON.stringify({email,password})});saveSession(data);await loadProfile();return data}
-  async function signUp(email,password,companyName){const data=await request('/auth/v1/signup',{method:'POST',body:JSON.stringify({email,password,data:{organisation_name:companyName||'Alert Construction'}})});if(data.access_token)saveSession(data);await loadProfile();return data}
+  async function signUp(email,password,companyName,teamCode=''){const data=await request('/auth/v1/signup',{method:'POST',body:JSON.stringify({email,password,data:{organisation_name:companyName||'Alert Construction',team_code:String(teamCode||'').trim().toUpperCase()}})});if(data.access_token)saveSession(data);await loadProfile();return data}
   async function refresh(){if(!session?.refresh_token)return null;try{const data=await request('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:JSON.stringify({refresh_token:session.refresh_token})});saveSession(data);return data}catch(_){profile=null;saveSession(null);return null}}
   async function signOut(){try{if(session?.access_token)await request('/auth/v1/logout',{method:'POST',headers:{Authorization:`Bearer ${session.access_token}`}})}catch(_){}profile=null;profileError='';saveSession(null)}
   async function ensure(){if(!session)return null;const expires=Number(session.expires_at||0)*1000;if(expires&&expires<Date.now()+60000)await refresh();return session}

@@ -1,6 +1,24 @@
 PRODUCT FOUNDATION & CLIENT ROADMAP — 14 JULY 2026
 ==================================================
 
+OPTIONAL TEAM CODE SIGNUP — 15 JULY 2026
+=========================================
+
+- Made Team Code explicitly optional during account creation.
+- A blank code now creates a separate private workspace and Owner account.
+- A valid invitation code joins the existing workspace as Site Supervisor.
+- Hid the confusing Join Existing Team control from Owners.
+- Added clear copy explaining that no code is required for personal use.
+- Added a safe migration that updates future signup behaviour and gives
+  accounts created before the profiles table existed a private Owner workspace.
+- Bumped the offline cache so the corrected account page replaces old copies.
+
+Validation completed:
+- Blank-code and supplied-code signup payloads: pass.
+- Owner invitation display and hidden Join Team control: pass.
+- Database migration markers, syntax and full product tests: pass.
+
+
 VICTORIA PROPERTY VALUE GUIDE — 14 JULY 2026
 =============================================
 

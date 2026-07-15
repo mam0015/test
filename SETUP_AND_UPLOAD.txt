@@ -21,11 +21,13 @@ PART A — CREATE THE SECURE DATABASE FOUNDATION
 
    supabase/migrations/20260714_product_foundation.sql
    supabase/migrations/20260714_security_audit_hardening.sql
+   supabase/migrations/20260715_optional_team_code.sql
 
 If Supabase reports `relation "public.profiles" does not exist`, the second
 file was run before the foundation. Stop, open a new SQL query, run the COMPLETE
 20260714_product_foundation.sql file first, wait for Success, and only then run
-20260714_security_audit_hardening.sql. Do not run selected fragments.
+20260714_security_audit_hardening.sql and 20260715_optional_team_code.sql. Do
+not run selected fragments.
 
 This creates:
 - organisations and private team codes;
@@ -38,6 +40,8 @@ This creates:
 - an authenticated server probe for catalogue access;
 - rotatable team codes and immediate member revocation;
 - active-membership checks used by every protected RLS policy.
+- optional Team Code signup and recovery for accounts created before the
+  profiles table existed.
 
 Do not disable Row Level Security.
 
@@ -109,16 +113,20 @@ PART D — CREATE THE FIRST OWNER AND TEAM
 1. Open the deployed Dashboard.
 2. Open Account at the bottom-left.
 3. Choose Create Account.
-4. Enter the company name and Owner email.
-5. Sign in after email confirmation, if required.
-6. Copy the private team code shown on the Account page.
-7. Each staff member creates their own account and uses Join Team.
-8. The Owner assigns each person as:
+4. Enter the workspace/company name and Owner email.
+5. Leave Team Code blank. A blank code creates a private workspace and makes
+   this account its Owner.
+6. Sign in after email confirmation, if required.
+7. The private invitation code is shown only to the Owner. Share it only when
+   another person should join this workspace.
+8. A staff member can enter that optional code while creating their account;
+   without a code, they receive their own separate private workspace instead.
+9. The Owner assigns each person as:
    - Owner
    - Office / Estimator
    - Site Supervisor
-9. Test Rotate Code. Confirm the old code stops working.
-10. Test Revoke on a spare team account. Confirm its protected pages lock on
+10. Test Rotate Code. Confirm the old code stops working.
+11. Test Revoke on a spare team account. Confirm its protected pages lock on
     the next request; then Restore it.
 
 Owners and Estimators can edit company rates. Site Supervisors have read-only

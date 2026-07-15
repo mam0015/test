@@ -117,16 +117,28 @@ returns trigger language plpgsql security definer set search_path = public
 as $$
 declare
   new_org uuid;
+  invited_org uuid;
+  requested_code text;
 begin
-  insert into public.organisations(name, created_by)
-  values (coalesce(nullif(new.raw_user_meta_data->>'organisation_name',''), 'Alert Construction Team'), new.id)
-  returning id into new_org;
-
-  insert into public.profiles(id, organisation_id, email, full_name, role)
-  values (new.id, new_org, coalesce(new.email,''), coalesce(new.raw_user_meta_data->>'full_name',''), 'owner');
-
-  insert into public.ac_workspaces(organisation_id, workspace, updated_by)
-  values (new_org, jsonb_build_object('projects', '[]'::jsonb, 'updatedAt', now()), new.id);
+  requested_code := upper(trim(coalesce(new.raw_user_meta_data->>'team_code','')));
+  if requested_code <> '' then
+    select id into invited_org from public.organisations where join_code = requested_code;
+    if invited_org is null then
+      raise exception 'Team code not found. Check the code or leave it blank to create your own workspace.';
+    end if;
+    insert into public.profiles(id, organisation_id, email, full_name, role)
+    values (new.id, invited_org, coalesce(new.email,''), coalesce(new.raw_user_meta_data->>'full_name',''), 'site_supervisor');
+    insert into public.ac_audit_log(organisation_id, action, module, details, actor_id)
+    values (invited_org, 'member_joined', 'accounts', jsonb_build_object('join_method','signup_team_code','assigned_role','site_supervisor'), new.id);
+  else
+    insert into public.organisations(name, created_by)
+    values (coalesce(nullif(new.raw_user_meta_data->>'organisation_name',''), 'Private Workspace'), new.id)
+    returning id into new_org;
+    insert into public.profiles(id, organisation_id, email, full_name, role)
+    values (new.id, new_org, coalesce(new.email,''), coalesce(new.raw_user_meta_data->>'full_name',''), 'owner');
+    insert into public.ac_workspaces(organisation_id, workspace, updated_by)
+    values (new_org, jsonb_build_object('projects', '[]'::jsonb, 'updatedAt', now()), new.id);
+  end if;
   return new;
 end;
 $$;

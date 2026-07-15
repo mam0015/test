@@ -7,6 +7,14 @@ const waitFor=async(test,label)=>{for(let i=0;i<120;i++){if(test())return;await 
 const jsonResponse=(data,ok=true,status=200)=>({ok,status,json:async()=>data});
 
 (async()=>{
+  const signupDom=new JSDOM('<!doctype html><body></body>',{url:'https://example.test/login/',runScripts:'outside-only'});
+  signupDom.window.AC_PLATFORM_CONFIG={supabaseUrl:'https://secure.test',publishableKey:'public'};
+  const signupBodies=[];signupDom.window.fetch=async(_url,options={})=>{signupBodies.push(JSON.parse(options.body||'{}'));return jsonResponse({user:{id:'new-user'}},true,200)};
+  signupDom.window.eval(read('shared/auth.js'));await signupDom.window.ACAuth.ready;
+  await signupDom.window.ACAuth.signUp('owner@example.test','password1','My Workspace','');
+  await signupDom.window.ACAuth.signUp('member@example.test','password1','Ignored Workspace',' ac123 ');
+  if(signupBodies[0].data.team_code!==''||signupBodies[1].data.team_code!=='AC123')throw new Error('Blank and supplied optional Team Codes were not sent correctly during signup');
+
   const authDom=new JSDOM('<!doctype html><body></body>',{url:'https://example.test/login/',runScripts:'outside-only'});
   authDom.window.AC_PLATFORM_CONFIG={supabaseUrl:'https://secure.test',publishableKey:'public'};
   authDom.window.localStorage.setItem('ac_auth_session_v1',JSON.stringify({access_token:'token',refresh_token:'refresh',expires_at:Math.floor(Date.now()/1000)+3600,user:{id:'u1',email:'site@example.test'}}));
@@ -24,6 +32,14 @@ const jsonResponse=(data,ok=true,status=200)=>({ok,status,json:async()=>data});
   if(catDom.window.ACPriceCatalogue.list('electrical')[0].builder_rate!==99)throw new Error('Protected catalogue response was not applied');
   let denied=false;try{await catDom.window.ACPriceCatalogue.save(catDom.window.ACPriceCatalogue.list('electrical')[0])}catch(_){denied=true}if(!denied)throw new Error('Site Supervisor catalogue save was not denied');
   if(!calls[0].options.headers.Authorization)throw new Error('Catalogue probe did not use the signed-in token');
+
+  const loginDom=new JSDOM(read('login/index.html'),{url:'https://example.test/login/',runScripts:'outside-only'});loginDom.window.HTMLElement.prototype.scrollIntoView=function(){};
+  loginDom.window.AC_PLATFORM_CONFIG={supabaseUrl:'https://secure.test',publishableKey:'public'};
+  loginDom.window.ACAuth={ready:Promise.resolve(),user:()=>({id:'owner1',email:'owner@example.test',email_confirmed_at:new Date().toISOString(),user_metadata:{organisation_name:'My Workspace'}}),profile:()=>({id:'owner1',organisation_id:'org1',role:'owner',active:true}),profileError:()=>'',headers:async()=>({Authorization:'Bearer token'}),hasAccess:()=>true,isSignedIn:()=>true,loadProfile:async()=>{},signOut:async()=>{},signIn:async()=>{},signUp:async()=>{},requestPasswordReset:async()=>{},resendVerification:async()=>{},updatePassword:async()=>{}};
+  loginDom.window.fetch=async url=>{const value=String(url);if(value.includes('/organisations?'))return jsonResponse([{id:'org1',name:'My Workspace',join_code:'INVITE123',join_code_rotated_at:new Date().toISOString()}]);if(value.includes('/profiles?'))return jsonResponse([{id:'owner1',email:'owner@example.test',role:'owner',active:true,updated_at:new Date().toISOString()}]);if(value.includes('/ac_audit_log?')||value.includes('/price_catalogue_history?'))return jsonResponse([]);throw new Error(`Unexpected login request ${url}`)};
+  loginDom.window.eval(read('login/app.js'));await waitFor(()=>!loginDom.window.document.querySelector('#ownerCode').hidden,'owner team code');
+  if(!loginDom.window.document.querySelector('#joinChoice').hidden)throw new Error('Owners still see the confusing Join Existing Team box');
+  if(!loginDom.window.document.querySelector('#signup').textContent.includes('completely fine'))throw new Error('Signup does not clearly explain that Team Code is optional');
 
   const dashboard=new JSDOM(read('index.html'),{url:'https://example.test/',runScripts:'outside-only'});
   [...dashboard.window.document.querySelectorAll('script:not([src])')].forEach(script=>dashboard.window.eval(script.textContent));
@@ -43,5 +59,5 @@ const jsonResponse=(data,ok=true,status=200)=>({ok,status,json:async()=>data});
   checklist.window.document.querySelector('#resetBtn').click();if(name.value!=='')throw new Error('Checklist reset did not clear the form');
   const undo=checklist.window.document.querySelector('.ac-undo button');if(!undo)throw new Error('Checklist reset did not provide Undo');undo.click();if(name.value!=='Undo Test')throw new Error('Checklist Undo did not restore prior data');
 
-  console.log('PASS: revoked access, server catalogue probe, role denial, dashboard search/account/sync and checklist undo');
+  console.log('PASS: optional Team Code signup, Owner UI, revoked access, server catalogue probe, role denial, dashboard search/account/sync and checklist undo');
 })().catch(error=>{console.error(error);process.exit(1)});
