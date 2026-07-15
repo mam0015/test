@@ -94,5 +94,47 @@ function domFor(html){
   if(!reopened.window.document.querySelector('#restoreNote').classList.contains('show'))throw new Error('Saved renovation estimate did not reopen from Projects');
   if(!reopened.window.document.querySelector('.grand-total'))throw new Error('Reopened renovation estimate was not recalculated');
 
-  console.log('PASS: Fast Vision request, pricing, Quote Analysis, Projects and Renovation Budget UI');
+  const property=domFor('property-estimate/index.html');
+  property.window.confirm=()=>true;
+  property.window.eval(read('shared/project-store.js'));
+  property.window.eval(read('property-estimate/app.js'));
+  const broadGuide=property.window.ACPropertyEstimator.calculate({suburb:'Ballarat',postcode:'3350',region:'regional',propertyType:'house',suburbMedian:'',benchmarkDate:'',marketTrend:'',comparables:[]});
+  if(broadGuide.method!=='victoria-benchmark'||broadGuide.confidence>=42||broadGuide.benchmarkDate!=='2025-12-31')throw new Error('Minimal-answer property fallback was not clearly broad and low-confidence');
+  const medianGuide=property.window.ACPropertyEstimator.calculate({suburb:'Geelong',postcode:'3220',region:'regional',propertyType:'unit',suburbMedian:'540000',benchmarkDate:'2026-06-30',marketTrend:'',comparables:[]});
+  if(medianGuide.method!=='suburb-median'||medianGuide.benchmark!==540000)throw new Error('User-supplied matching suburb median was not preferred over the broad fallback');
+  property.window.document.querySelector('#estimateName').value='Victoria Home Test';
+  property.window.document.querySelector('#suburb').value='Rowville';
+  property.window.document.querySelector('#postcode').value='3178';
+  property.window.document.querySelector('#bedrooms').value='4';
+  property.window.document.querySelector('#bathrooms').value='2';
+  property.window.document.querySelector('#landArea').value='620';
+  property.window.document.querySelector('#floorArea').value='205';
+  property.window.document.querySelector('#condition').value='average';
+  const comparableCards=[...property.window.document.querySelectorAll('[data-comparable]')];
+  [[910000,'2026-03-20',4,2,600,195],[955000,'2026-02-10',4,2,650,210],[925000,'2025-12-12',3,2,610,185]].forEach((values,index)=>{
+    const card=comparableCards[index];card.querySelector('.comp-address-value').value=`Comparable ${index+1}, Rowville`;card.querySelector('.comp-price').value=String(values[0]);card.querySelector('.comp-date').value=values[1];card.querySelector('.comp-bedrooms').value=String(values[2]);card.querySelector('.comp-bathrooms').value=String(values[3]);card.querySelector('.comp-land').value=String(values[4]);card.querySelector('.comp-floor').value=String(values[5]);card.querySelector('.comp-condition').value='average';
+  });
+  property.window.document.querySelector('#calculate').click();
+  if(!property.window.document.querySelector('[data-step="4"]').classList.contains('active'))throw new Error('Property value result did not open');
+  if(!property.window.document.querySelector('.estimate-main')?.textContent.includes('$'))throw new Error('Property value midpoint was not calculated');
+  if(!property.window.document.querySelector('#results').textContent.includes('3 adjusted comparable sales'))throw new Error('Property estimator did not use the three comparable sales');
+  const propertyCapture=await property.window.ACProjectCapture();
+  if(propertyCapture.module!=='property-estimate'||propertyCapture.data.result.confidence<70)throw new Error('Property project capture or evidence confidence is incomplete');
+  const propertyProject=property.window.ACProjects.create({name:'Saved Property Project'});
+  property.window.eval(read('shared/project-bridge.js'));
+  property.window.document.querySelector('.acp-fab').click();
+  property.window.document.querySelector('#acpProject').value=propertyProject.id;
+  property.window.document.querySelector('.acp-save').click();
+  await waitFor(()=>property.window.ACProjects.get(propertyProject.id).records.length===1,'property project save');
+  const propertyRecord=property.window.ACProjects.get(propertyProject.id).records[0];
+  if(propertyRecord.module!=='property-estimate'||!propertyRecord.data.state.suburb)throw new Error('Property value guide was not saved into Projects');
+
+  const propertyReopened=domFor('property-estimate/index.html');
+  propertyReopened.window.localStorage.setItem('ac_project_property_restore_v1',JSON.stringify({state:propertyCapture.data.state,result:propertyCapture.data.result,projectId:propertyProject.id,recordId:propertyRecord.id}));
+  propertyReopened.window.eval(read('shared/project-store.js'));
+  propertyReopened.window.eval(read('property-estimate/app.js'));
+  if(!propertyReopened.window.document.querySelector('#restoreNote').classList.contains('show'))throw new Error('Saved property estimate did not reopen from Projects');
+  if(!propertyReopened.window.document.querySelector('.estimate-main'))throw new Error('Reopened property estimate did not restore its value guide');
+
+  console.log('PASS: Fast Vision, pricing, Quote Analysis, Projects, Renovation Budget and Property Value Guide UI');
 })().catch(error=>{console.error(error);process.exit(1)});

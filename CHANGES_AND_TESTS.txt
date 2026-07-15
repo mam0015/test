@@ -1,6 +1,31 @@
 PRODUCT FOUNDATION & CLIENT ROADMAP — 14 JULY 2026
 ==================================================
 
+VICTORIA PROPERTY VALUE GUIDE — 14 JULY 2026
+=============================================
+
+- Added a guided residential Property Value Guide for Victoria.
+- Kept only suburb, region and property type as essential questions; all other
+  answers are optional and improve the evidence-confidence score.
+- Uses recent comparable sales first, a matching suburb median second and the
+  December 2025 Valuer-General Victoria broad market figures only as fallback.
+- Adjusts comparable sales transparently for sale timing, land/floor area,
+  bedrooms, bathrooms, car spaces and condition when those facts are supplied.
+- Shows a midpoint, defensible range, evidence source, confidence score, every
+  applied adjustment and the missing information that would improve the guide.
+- Added plan/photo/PDF attachments for human review without using AI.
+- Added notes, follow-up date, Save Draft, Print / Save PDF, Save to Project,
+  reopen/edit support and automatic project follow-up tasks.
+- Added multi-file Project attachments while retaining old single-file records.
+- Added the tool to dashboard search, Projects quick links and offline PWA cache.
+- Clearly distinguishes a preliminary guide from a formal valuation, agent
+  estimated selling price and Victorian Statement of Information.
+
+Validation completed:
+- JavaScript syntax and product validation: pass.
+- Three-comparable calculation, confidence, project save and reopen tests: pass.
+
+
 SECURITY & AUDIT HARDENING — CLIENT REVIEW PASS
 ===============================================
 

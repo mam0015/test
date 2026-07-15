@@ -6,6 +6,11 @@
   "display": "standalone",
   "background_color": "#050505",
   "theme_color": "#050505",
+  "shortcuts": [
+    { "name": "Projects", "short_name": "Projects", "url": "./projects/" },
+    { "name": "Property Value Guide", "short_name": "Property Value", "url": "./property-estimate/" },
+    { "name": "Renovation Budget", "short_name": "Renovation", "url": "./renovation-budget/" }
+  ],
   "icons": [
     { "src": "./assets/app-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
   ]

@@ -27,15 +27,16 @@
   }
   function addRecord(projectId,record){
     const data=read(),project=data.projects.find(item=>item.id===projectId);if(!project)throw new Error('Project not found.');
-    const entry={id:uid('record'),module:String(record.module||'general'),title:String(record.title||'Saved record'),summary:String(record.summary||''),createdAt:now(),updatedAt:now(),attachmentId:record.attachmentId||null,attachmentName:record.attachmentName||'',data:clean(record.data||{})};
+    const attachmentIds=Array.isArray(record.attachmentIds)?record.attachmentIds.filter(Boolean):record.attachmentId?[record.attachmentId]:[],attachmentNames=Array.isArray(record.attachmentNames)?record.attachmentNames.filter(Boolean):record.attachmentName?[record.attachmentName]:[];
+    const entry={id:uid('record'),module:String(record.module||'general'),title:String(record.title||'Saved record'),summary:String(record.summary||''),createdAt:now(),updatedAt:now(),attachmentId:attachmentIds[0]||null,attachmentName:attachmentNames[0]||'',attachmentIds,attachmentNames,data:clean(record.data||{})};
     project.records.unshift(entry);project.updatedAt=now();write(data);return clean(entry);
   }
   function updateRecord(projectId,recordId,patch){
     const data=read(),project=data.projects.find(item=>item.id===projectId),record=project?.records?.find(item=>item.id===recordId);if(!record)return null;
-    ['title','summary'].forEach(key=>{if(patch&&patch[key]!==undefined)record[key]=String(patch[key])});if(patch&&patch.data!==undefined)record.data=clean(patch.data);record.updatedAt=now();project.updatedAt=now();write(data);return clean(record);
+    ['title','summary'].forEach(key=>{if(patch&&patch[key]!==undefined)record[key]=String(patch[key])});if(patch&&patch.data!==undefined)record.data=clean(patch.data);if(Array.isArray(patch?.attachmentIds)&&patch.attachmentIds.length){record.attachmentIds=patch.attachmentIds.filter(Boolean);record.attachmentNames=(patch.attachmentNames||[]).filter(Boolean);record.attachmentId=record.attachmentIds[0]||null;record.attachmentName=record.attachmentNames[0]||''}record.updatedAt=now();project.updatedAt=now();write(data);return clean(record);
   }
   async function deleteRecord(projectId,recordId){
-    const data=read(),project=data.projects.find(item=>item.id===projectId);if(!project)return false;const record=project.records.find(item=>item.id===recordId);project.records=project.records.filter(item=>item.id!==recordId);project.updatedAt=now();write(data);if(record?.attachmentId)await deleteAttachment(record.attachmentId);return true;
+    const data=read(),project=data.projects.find(item=>item.id===projectId);if(!project)return false;const record=project.records.find(item=>item.id===recordId);project.records=project.records.filter(item=>item.id!==recordId);project.updatedAt=now();write(data);const ids=Array.isArray(record?.attachmentIds)&&record.attachmentIds.length?record.attachmentIds:record?.attachmentId?[record.attachmentId]:[];await Promise.all(ids.map(deleteAttachment));return true;
   }
   function addTask(projectId,task){
     const data=read(),project=data.projects.find(item=>item.id===projectId);if(!project)throw new Error('Project not found.');

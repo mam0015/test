@@ -4,7 +4,7 @@ ALERT CONSTRUCTION — PRODUCT FOUNDATION SETUP
 This package keeps the existing black, white and yellow app design and adds:
 secure accounts and team roles, cloud project sync, an editable price catalogue,
 AI audit records, daylight mode, onboarding, search, confirm/undo safeguards,
-and offline-capable non-AI tools.
+offline-capable non-AI tools and a Victoria Property Value Guide.
 
 IMPORTANT
 ---------
@@ -21,6 +21,11 @@ PART A — CREATE THE SECURE DATABASE FOUNDATION
 
    supabase/migrations/20260714_product_foundation.sql
    supabase/migrations/20260714_security_audit_hardening.sql
+
+If Supabase reports `relation "public.profiles" does not exist`, the second
+file was run before the foundation. Stop, open a new SQL query, run the COMPLETE
+20260714_product_foundation.sql file first, wait for Success, and only then run
+20260714_security_audit_hardening.sql. Do not run selected fragments.
 
 This creates:
 - organisations and private team codes;
@@ -85,6 +90,7 @@ Correct repository root:
   plumbing/
   cladding/
   renovation-budget/
+  property-estimate/
   plan-ai/
   quote-analysis/
   projects/
@@ -126,6 +132,7 @@ PART E — CHECK THE LIVE SYSTEM
 Test these pages after signing in:
 - Dashboard
 - Renovation Budget Planner
+- Property Value Guide
 - Electrical, Plumbing and Cladding calculators
 - Projects & Schedule
 - Live Price Catalogue
@@ -199,6 +206,29 @@ Currently labelled planning allowances until AC trade data is supplied:
 - Concreting
 - Heating and cooling
 - Permits and design
+
+
+VICTORIA PROPERTY VALUE GUIDE
+-----------------------------
+
+This tool is deterministic JavaScript and does not use AI. It works offline
+after being cached. Plans, photos and PDFs can be saved with the Project for
+human review, but they do not automatically change the estimate.
+
+Evidence order:
+1. Recent, genuinely comparable settled sales entered by the user.
+2. A current matching suburb median entered by the user.
+3. Broad December 2025 Valuer-General Victoria metropolitan/regional benchmark.
+
+The built-in official benchmark values are a fallback, not a suburb valuation.
+Townhouses do not have a separate figure in that broad series, so the app labels
+its house/unit midpoint as modelled and gives it low confidence. Update the
+benchmark or enter current comparables whenever newer verified data is available.
+
+The output is a preliminary market-value guide only. It is not a formal
+valuation, lender/tax/insurance valuation, agent estimated selling price or
+Victorian Statement of Information. Obtain a licensed agent and/or Certified
+Practising Valuer review before a financial decision.
 
 
 SECURITY NOTES

@@ -59,7 +59,7 @@ if(renovation.customerMargin!==0.2||renovation.gst!==0.1)fail('Renovation pricin
 const base=1000,customer=base*1.2*1.1;
 if(Math.abs(customer-1320)>0.001)fail('Pricing formula must apply 20% before 10% GST');
 
-const required=['index.html','.nojekyll','offline.html','login/index.html','login/app.js','catalogue/index.html','catalogue/app.js','plan-ai/index.html','quote-analysis/index.html','projects/index.html','renovation-budget/index.html','renovation-budget/rates.js','renovation-budget/app.js','shared/auth.js','shared/cloud-sync.js','shared/catalogue-runtime.js','shared/product-shell.js','supabase/migrations/20260714_product_foundation.sql','supabase/migrations/20260714_security_audit_hardening.sql','supabase/functions/analyse-plan/index.ts','assets/app-icon.svg','assets/alert-construction-logo-white.svg'];
+const required=['index.html','.nojekyll','offline.html','login/index.html','login/app.js','catalogue/index.html','catalogue/app.js','plan-ai/index.html','quote-analysis/index.html','projects/index.html','renovation-budget/index.html','renovation-budget/rates.js','renovation-budget/app.js','property-estimate/index.html','property-estimate/app.js','shared/auth.js','shared/cloud-sync.js','shared/catalogue-runtime.js','shared/product-shell.js','supabase/migrations/20260714_product_foundation.sql','supabase/migrations/20260714_security_audit_hardening.sql','supabase/functions/analyse-plan/index.ts','assets/app-icon.svg','assets/alert-construction-logo-white.svg'];
 for(const file of required)if(!fs.existsSync(path.join(root,file)))fail(`Missing ${file}`);
 
 const allFiles=[];
@@ -77,6 +77,7 @@ if(!catalogue.includes('securityState')||!catalogue.includes('catalogue_access_p
 if(!auth.includes('requestPasswordReset')||!auth.includes('resendVerification')||!auth.includes('hasAccess'))fail('Account recovery or active access handling is incomplete');
 if(!shell.includes('ac-signout')||!shell.includes('ac-sync-label'))fail('Dashboard account/sign-out/sync controls are incomplete');
 if(!home.includes('toolSearch')||!home.includes('AI-assisted • Human verification required'))fail('Dashboard search or trust labels are missing');
+if(!home.includes('./property-estimate/index.html')||!read('property-estimate/app.js').includes('comparable-sales'))fail('Property Value Guide is not connected to the dashboard or its evidence method is missing');
 if(!edge.includes('Sign in before using AI analysis'))fail('Edge Function does not enforce signed-in AI access');
 
 console.log('PASS: product foundation, security schema, catalogue ordering, renovation rate reuse, formula, assets and secret scan');

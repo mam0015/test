@@ -29,7 +29,7 @@ const jsonResponse=(data,ok=true,status=200)=>({ok,status,json:async()=>data});
   [...dashboard.window.document.querySelectorAll('script:not([src])')].forEach(script=>dashboard.window.eval(script.textContent));
   dashboard.window.document.querySelector('#toolSearch').value='Build plumbing quotes';dashboard.window.document.querySelector('#toolSearch').dispatchEvent(new dashboard.window.Event('input'));
   const shown=[...dashboard.window.document.querySelectorAll('.tools-grid .tool')].filter(tool=>!tool.hidden);
-  if(shown.length!==1||shown[0].dataset.tool!=='plumbing')throw new Error('Dashboard tool search did not filter the nine-tool grid');
+  if(shown.length!==1||shown[0].dataset.tool!=='plumbing')throw new Error('Dashboard tool search did not filter the tool grid');
 
   const shellDom=new JSDOM('<!doctype html><body><header class="topbar"></header></body>',{url:'https://example.test/',runScripts:'outside-only'});
   shellDom.window.ACAuth={ready:Promise.resolve(),user:()=>({email:'owner@example.test'}),profile:()=>({role:'owner',active:true}),hasAccess:()=>true,isSignedIn:()=>true,signOut:async()=>{}};
