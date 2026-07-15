@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#050505">
+  <meta name="description" content="Rule-based preliminary permit and document checklist for Victorian building and renovation projects.">
+  <title>Permit Checklist (Victoria) | Alert Construction</title>
+  <link rel="icon" href="../assets/app-icon.svg" type="image/svg+xml">
+  <style>
+    :root{--bg:#050505;--panel:#111;--panel2:#181818;--input:#202020;--line:#303030;--text:#f7f7f7;--muted:#aaa;--yellow:#f5b400;--green:#38d281;--red:#ff7979;--blue:#79b7ff;--orange:#ffad45;--shadow:0 22px 65px rgba(0,0,0,.45)}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.45}button,input,select,textarea{font:inherit}button{cursor:pointer}a{color:inherit}.app{width:min(1240px,100%);margin:auto;padding:16px 18px 95px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:15px}.back{color:var(--muted);text-decoration:none;font-size:13px;font-weight:850}.brand{display:flex;align-items:center;gap:9px;font-weight:950}.logo{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--yellow);color:#050505}.hero{padding:clamp(24px,5vw,48px);border:1px solid var(--line);border-radius:24px;background:radial-gradient(circle at 88% 10%,rgba(245,180,0,.17),transparent 43%),linear-gradient(145deg,#151515,#080808);box-shadow:var(--shadow)}.eyebrow{color:var(--yellow);font-size:11px;font-weight:950;letter-spacing:.15em;text-transform:uppercase}.hero h1{margin:8px 0;font-size:clamp(38px,7vw,72px);line-height:.98;letter-spacing:-.055em}.hero h1 span{color:var(--yellow)}.hero p{max-width:760px;margin:12px 0 0;color:#c6c6c6;font-size:clamp(15px,2vw,18px)}.trust{display:inline-flex;margin-top:18px;padding:7px 10px;border:1px solid rgba(245,180,0,.38);border-radius:99px;background:rgba(245,180,0,.08);color:#ffd15a;font-size:11px;font-weight:900}
+    .warning{margin:15px 0;padding:18px;border:1px solid rgba(255,121,121,.52);border-left:5px solid var(--red);border-radius:17px;background:rgba(255,90,90,.08)}.warning strong{display:block;color:#fff;font-size:16px}.warning p{margin:6px 0 0;color:#ffd0d0;font-size:13px}.restore{display:none;margin:14px 0;padding:12px 14px;border:1px solid rgba(56,210,129,.4);border-radius:14px;background:rgba(56,210,129,.08);color:#bfffd8;font-size:12px}.restore.show{display:block}
+    .layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:15px;align-items:start}.card{margin-top:15px;padding:clamp(18px,3.5vw,28px);border:1px solid var(--line);border-radius:21px;background:var(--panel);box-shadow:var(--shadow)}.card h2{margin:0;font-size:clamp(22px,3vw,30px);letter-spacing:-.03em}.card>p{margin:6px 0 18px;color:var(--muted);font-size:13px}.section-title{display:flex;align-items:center;gap:9px;margin:25px 0 11px;font-size:16px;font-weight:900}.section-title:first-of-type{margin-top:0}.section-title span{display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--yellow);color:#050505;font-size:12px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field.full{grid-column:1/-1}.field label{display:block;margin:0 0 6px;color:#bbb;font-size:12px;font-weight:750}.field input,.field select,.field textarea{width:100%;min-height:50px;padding:11px 12px;border:1px solid #363636;border-radius:12px;background:var(--input);color:#fff;outline:none}.field textarea{min-height:104px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--yellow);box-shadow:0 0 0 3px rgba(245,180,0,.1)}.optional{color:#777;font-weight:500}.checks{display:grid;grid-template-columns:1fr 1fr;gap:9px}.check{display:flex;align-items:flex-start;gap:10px;min-height:59px;padding:11px;border:1px solid #303030;border-radius:13px;background:#181818;cursor:pointer}.check:hover{border-color:#575757}.check input{width:19px;height:19px;margin:1px 0;accent-color:var(--yellow);flex:none}.check span{font-size:12px;color:#ddd}.check small{display:block;color:#888;margin-top:2px}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:22px}.actions button{min-height:50px;padding:0 17px;border:0;border-radius:13px;font-weight:900}.primary{background:var(--yellow);color:#050505}.secondary{background:#252525;color:#fff;border:1px solid #363636!important}.danger{background:transparent;color:#ff9a9a;border:1px solid rgba(255,121,121,.38)!important}.side{position:sticky;top:14px}.side h3{margin:0 0 8px}.side p,.side li{color:#aaa;font-size:12px}.side ol{padding-left:19px}.side a{color:#a8d0ff}.source-list{display:grid;gap:8px;margin-top:12px}.source-list a{display:block;padding:10px 11px;border:1px solid #303030;border-radius:11px;background:#181818;text-decoration:none;font-size:11px;font-weight:800}.source-list a:hover{border-color:var(--yellow);color:#ffd15a}
+    .results{display:none}.results.show{display:block}.result-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.result-head p{margin:5px 0 0;color:var(--muted);font-size:13px}.result-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:17px 0}.stat{padding:14px;border:1px solid #2d2d2d;border-radius:14px;background:#181818}.stat span,.stat strong{display:block}.stat span{color:#999;font-size:10px;text-transform:uppercase;letter-spacing:.08em}.stat strong{font-size:23px;margin-top:3px}.permit-list{display:grid;gap:10px}.permit{padding:16px;border:1px solid #303030;border-radius:16px;background:#171717}.permit.likely{border-color:rgba(255,173,69,.52)}.permit.check{display:block;min-height:0;border-color:rgba(121,183,255,.36)}.permit-top{display:flex;align-items:center;justify-content:space-between;gap:9px}.permit h3{margin:0;font-size:18px}.status{flex:none;padding:6px 9px;border-radius:99px;font-size:10px;font-weight:950;text-transform:uppercase;letter-spacing:.04em}.likely .status{background:rgba(255,173,69,.14);color:#ffc679}.permit.check .status{background:rgba(121,183,255,.13);color:#acd2ff}.permit p{margin:9px 0 0;color:#c4c4c4;font-size:12px}.authority{margin-top:9px!important;color:#fff!important;font-weight:800}.permit a{color:#a8d0ff}.doc-groups{display:grid;grid-template-columns:1fr 1fr;gap:12px}.doc-group{padding:14px;border:1px solid #2f2f2f;border-radius:15px;background:#171717}.doc-group h3{margin:0 0 10px;font-size:15px}.doc-item{display:grid;grid-template-columns:auto 1fr;gap:8px;padding:8px 0;border-top:1px solid #292929}.doc-item:first-of-type{border-top:0}.doc-item input[type=checkbox]{width:18px;height:18px;accent-color:var(--green)}.doc-item label{font-size:12px;color:#ddd}.doc-item input[type=text]{grid-column:2;width:100%;min-height:34px;padding:7px 9px;border:1px solid #303030;border-radius:9px;background:#202020;color:#fff;font-size:11px}.final-warning{margin-top:16px;padding:16px;border:1px solid rgba(255,121,121,.45);border-radius:15px;background:rgba(255,90,90,.07);color:#ffd2d2;font-size:12px}.final-warning strong{color:#fff}.acp-fab{display:none!important}body.result-ready .acp-fab{display:block!important}
+    @media(max-width:900px){.layout{grid-template-columns:1fr}.side{position:static}.result-summary{grid-template-columns:1fr 1fr}.doc-groups{grid-template-columns:1fr}}
+    @media(max-width:620px){.app{padding:10px 10px 90px}.form-grid,.checks{grid-template-columns:1fr}.field.full{grid-column:auto}.result-head{display:block}.result-summary{grid-template-columns:1fr}.permit-top{align-items:flex-start}.brand span{display:none}.actions button{width:100%}}
+    @media print{body{background:#fff;color:#111}.topbar,.hero,.warning,.side,.form-card,.actions,.ac-platform,.acp-fab{display:none!important}.app{width:100%;padding:0}.results{display:block!important}.card,.permit,.doc-group,.stat{box-shadow:none;background:#fff;color:#111;border-color:#bbb}.permit p,.result-head p,.doc-item label,.final-warning{color:#333}.final-warning{border-color:#900}.status{border:1px solid #777}.doc-item input[type=text]{background:#fff;color:#111}}
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar"><a class="back" href="../index.html">← Dashboard</a><div class="brand"><div class="logo">AC</div><span>Permit Checklist</span></div></header>
+    <section class="hero"><div class="eyebrow">Victoria · Preliminary screening tool</div><h1>Permit <span>Checklist</span></h1><p>Tell us what you plan to build or renovate. The app will flag possible approvals and prepare a working document checklist.</p><span class="trust">Best-effort guess only • No AI • Authority verification required</span></section>
+    <section class="warning" role="alert"><strong>This result is only a best-effort guess. It is not always true and may be wrong or incomplete.</strong><p>This tool is not legal, planning, building or safety advice, and it is not a permit or approval. Requirements depend on the exact address, planning scheme, overlays, title, dimensions, cost, scope and construction method. Never start work or make a legal, financial or construction decision based only on this checklist. Always contact the correct qualified person or authority—normally the relevant local council and an appointed registered building surveyor—and obtain confirmation in writing. Also verify with BPC, the water authority, Energy Safe Victoria, WorkSafe Victoria and licensed practitioners where relevant.</p></section>
+    <div class="restore" id="restoreNote">This saved Permit Checklist was reopened from Projects. Changes will update the same project record when you save again.</div>
+
+    <div class="layout">
+      <div>
+        <section class="card form-card">
+          <h2>Project screening questions</h2><p>Only the project type is required. Answering more questions makes the guess more useful, but never makes it an approval or guarantees that it is correct.</p>
+          <div class="section-title"><span>1</span> Project basics</div>
+          <div class="form-grid">
+            <div class="field"><label for="projectName">Project name <em class="optional">(optional)</em></label><input id="projectName" placeholder="e.g. Rowville bathroom renovation"></div>
+            <div class="field"><label for="projectType">Project type *</label><select id="projectType"><option value="">Choose a project type</option><option value="internal-renovation">Internal renovation — kitchen, bathroom or rooms</option><option value="structural-alteration">Structural alteration / wall removal</option><option value="extension">House extension / addition</option><option value="new-home">New house / townhouse / unit</option><option value="deck-verandah">Deck, verandah or pergola</option><option value="shed-garage">Shed, garage or carport</option><option value="pool-spa">Swimming pool or spa</option><option value="demolition">Demolition or partial demolition</option><option value="fence-retaining">Fence or retaining wall</option><option value="change-use">Change of use / subdivision</option><option value="other">Other building or property work</option></select></div>
+            <div class="field"><label for="address">Site address <em class="optional">(optional)</em></label><input id="address" autocomplete="street-address" placeholder="Victorian property address"></div>
+            <div class="field"><label for="council">Local council <em class="optional">(optional)</em></label><input id="council" placeholder="e.g. Knox City Council"></div>
+            <div class="field"><label for="deliveryRole">Who will deliver the work? <em class="optional">(optional)</em></label><select id="deliveryRole"><option value="unknown">Not decided / unknown</option><option value="registered-builder">Registered builder</option><option value="owner-builder">Owner-builder</option><option value="trade-only">Licensed trade only</option></select></div>
+            <div class="field"><label for="projectValue">Estimated work value <em class="optional">(optional)</em></label><select id="projectValue"><option value="unknown">Unknown / not entered</option><option value="under20">$20,000 or less</option><option value="over20">More than $20,000</option></select></div>
+            <div class="field"><label for="followUpDate">Follow-up date <em class="optional">(optional)</em></label><input id="followUpDate" type="date"></div>
+            <div class="field full"><label for="notes">Project notes <em class="optional">(optional)</em></label><textarea id="notes" placeholder="Scope, dimensions, known title restrictions, council advice or questions to confirm…"></textarea></div>
+          </div>
+
+          <div class="section-title"><span>2</span> Scope and site triggers</div>
+          <div class="checks">
+            <label class="check"><input id="structural" type="checkbox"><span>Structural or load-bearing work<small>Walls, roof, footings, beams or structural openings</small></span></label>
+            <label class="check"><input id="external" type="checkbox"><span>External footprint or appearance changes<small>Extension, façade, deck, outbuilding or height change</small></span></label>
+            <label class="check"><input id="demolition" type="checkbox"><span>Demolition or removal<small>Whole or part of a building or structure</small></span></label>
+            <label class="check"><input id="plumbing" type="checkbox"><span>Plumbing, drainage or gas work<small>New or altered plumbing installations</small></span></label>
+            <label class="check"><input id="electrical" type="checkbox"><span>Electrical installation work<small>New, altered or relocated electrical work</small></span></label>
+            <label class="check"><input id="poolSpa" type="checkbox"><span>Pool or spa capable of holding over 300 mm water<small>Includes safety barrier obligations</small></span></label>
+            <label class="check"><input id="boundary" type="checkbox"><span>Near boundary or may affect a neighbour<small>Siting variation, access, protection or party-wall concern</small></span></label>
+            <label class="check"><input id="excavation" type="checkbox"><span>Excavation, retaining wall or deep footing<small>May affect adjoining land, services or easements</small></span></label>
+            <label class="check"><input id="easement" type="checkbox"><span>On or near an easement, sewer or drain<small>May require water-authority or council consent</small></span></label>
+            <label class="check"><input id="roadAsset" type="checkbox"><span>Use road, footpath or council asset<small>Skip, crane, crossover, hoarding or asset protection</small></span></label>
+            <label class="check"><input id="treeRemoval" type="checkbox"><span>Tree or vegetation removal<small>Local-law or planning controls may apply</small></span></label>
+            <label class="check"><input id="asbestos" type="checkbox"><span>Asbestos is known or suspected<small>Common in older buildings; special removal rules apply</small></span></label>
+          </div>
+
+          <div class="section-title"><span>3</span> Planning controls you know about</div>
+          <div class="checks">
+            <label class="check"><input id="heritage" type="checkbox"><span>Heritage Overlay / heritage place<small>External and sometimes internal work may be controlled</small></span></label>
+            <label class="check"><input id="bushfire" type="checkbox"><span>Bushfire Management Overlay / bushfire area<small>Planning and construction requirements may apply</small></span></label>
+            <label class="check"><input id="flood" type="checkbox"><span>Flood, inundation or environmental overlay<small>Referral and design requirements may apply</small></span></label>
+            <label class="check"><input id="unknownControls" type="checkbox"><span>I have not checked zoning or overlays<small>Get a free Planning Property Report before relying on the list</small></span></label>
+          </div>
+          <div class="actions"><button class="primary" id="generate" type="button">Generate Permit Checklist</button><button class="secondary" id="saveDraft" type="button">Save Draft</button><button class="danger" id="reset" type="button">Reset</button></div>
+        </section>
+
+        <section class="card results" id="results" aria-live="polite">
+          <div class="result-head"><div><h2 id="resultTitle">Preliminary permit screen</h2><p id="resultMeta"></p></div><button class="secondary" id="print" type="button">Print Checklist</button></div>
+          <div class="result-summary"><div class="stat"><span>Likely approvals</span><strong id="likelyCount">0</strong></div><div class="stat"><span>Must confirm</span><strong id="checkCount">0</strong></div><div class="stat"><span>Documents listed</span><strong id="docCount">0</strong></div></div>
+          <h2>Possible permits, consents and certificates</h2><p>These are guesses to investigate—not final decisions. “Confirm” never means “not required”, and “Likely” never means that approval has been granted.</p>
+          <div class="permit-list" id="permitList"></div>
+          <div class="section-title"><span>✓</span> Working document checklist</div>
+          <p>Tick items as you obtain them and add a reference or note. The checked state is saved with the Project.</p>
+          <div class="doc-groups" id="docGroups"></div>
+          <div class="final-warning"><strong>Important: confirm the requirements before proceeding.</strong> This checklist is a preliminary guide and may not identify every approval required for this property or project. Before starting work, provide the complete scope, plans and title information to the relevant local council and an appointed registered building surveyor. Where applicable, also confirm the requirements with the responsible authority or licensed practitioner. Written confirmation from the appropriate professional or authority should always take priority over this checklist.</div>
+        </section>
+      </div>
+
+      <aside class="card side">
+        <h3>Minimum verification path</h3>
+        <ol><li>Download the property’s Planning Property Report.</li><li>Ask the local council planning/building team about planning controls and local-law permits.</li><li>Appoint a registered building surveyor to decide the building-permit path.</li><li>Confirm trade certificates with licensed practitioners.</li><li>Do not start until required approvals are issued.</li></ol>
+        <h3>Official Victorian sources</h3>
+        <div class="source-list">
+          <a href="https://www.planning.vic.gov.au/planning-schemes/planning-property-report" target="_blank" rel="noopener">VicPlan / Planning Property Report ↗</a>
+          <a href="https://www.planning.vic.gov.au/planning-approvals/planning-enquiries-and-requests/applying-for-a-planning-permit" target="_blank" rel="noopener">Planning permits in Victoria ↗</a>
+          <a href="https://www.building.vic.gov.au/before-you-start-building/agreements-and-contracts" target="_blank" rel="noopener">Building permits and exemptions ↗</a>
+          <a href="https://www.building.vic.gov.au/before-you-start-building/building-standards-in-victoria" target="_blank" rel="noopener">Registered building surveyors ↗</a>
+          <a href="https://www.bpc.vic.gov.au/owner-builders/becoming-an-owner-builder/eligibility" target="_blank" rel="noopener">BPC owner-builder eligibility ↗</a>
+          <a href="https://www.energysafe.vic.gov.au/certificates-electrical-safety/certificates-electrical-safety-consumers" target="_blank" rel="noopener">Electrical safety certificates ↗</a>
+          <a href="https://www.worksafe.vic.gov.au/understand-and-manage-asbestos-workplaces" target="_blank" rel="noopener">WorkSafe asbestos guidance ↗</a>
+        </div>
+      </aside>
+    </div>
+  </main>
+  <script src="../shared/platform-config.js"></script>
+  <script src="../shared/auth.js"></script>
+  <script src="../shared/project-store.js"></script>
+  <script src="./app.js"></script>
+  <script src="../shared/project-bridge.js"></script>
+  <script src="../shared/product-shell.js"></script>
+</body>
+</html>

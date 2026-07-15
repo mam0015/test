@@ -2,7 +2,7 @@
   'use strict';
   const $=id=>document.getElementById(id),store=window.ACProjects;
   let currentId=store.active()||store.list()[0]?.id||'';
-  const moduleInfo={electrical:['⚡','Electrical Estimate'],plumbing:['◉','Plumbing Estimate'],cladding:['▧','Cladding Estimate'],'renovation-budget':['⌂','Renovation Budget Plan'],'property-estimate':['◇','Property Value Guide'],'plan-estimate':['▤','Plan Estimate'],'quote-analysis':['⌁','Quote Analysis'],'site-checklist':['✓','Site Visit'],document:['▣','Project File / Note'],general:['•','Project Record']};
+  const moduleInfo={electrical:['⚡','Electrical Estimate'],plumbing:['◉','Plumbing Estimate'],cladding:['▧','Cladding Estimate'],'renovation-budget':['⌂','Renovation Budget Plan'],'property-estimate':['◇','Property Value Guide'],'permit-checklist':['⚑','Victoria Permit Checklist'],'plan-estimate':['▤','Plan Estimate'],'quote-analysis':['⌁','Quote Analysis'],'site-checklist':['✓','Site Visit'],document:['▣','Project File / Note'],general:['•','Project Record']};
   function esc(value){return String(value==null?'':value).replace(/[&<>"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[char]))}
   function dateText(value){if(!value)return'No date';const d=new Date(value+'T00:00:00');return Number.isNaN(d.getTime())?value:d.toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'})}
   function toast(message){const el=document.createElement('div');el.className='toast';el.textContent=message;document.body.appendChild(el);setTimeout(()=>el.remove(),2600)}
@@ -72,6 +72,7 @@
     if(record.module==='site-checklist'){localStorage.setItem('ac_project_checklist_restore_v1',JSON.stringify(data.state||{}));location.href='../checklist/index.html';return}
     if(record.module==='renovation-budget'){localStorage.setItem('ac_project_renovation_restore_v1',JSON.stringify({state:data.state||data,projectId:project.id,recordId:record.id}));location.href='../renovation-budget/index.html';return}
     if(record.module==='property-estimate'){localStorage.setItem('ac_project_property_restore_v1',JSON.stringify({state:data.state||data,result:data.result||null,projectId:project.id,recordId:record.id}));location.href='../property-estimate/index.html';return}
+    if(record.module==='permit-checklist'){localStorage.setItem('ac_project_permit_restore_v1',JSON.stringify({state:data.state||data,result:data.result||null,projectId:project.id,recordId:record.id}));location.href='../permit-checklist/index.html';return}
     alert(record.summary||'The record is saved in this project.');
   }
   function renderTasks(project){

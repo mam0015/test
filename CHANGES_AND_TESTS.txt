@@ -1,6 +1,38 @@
 PRODUCT FOUNDATION & CLIENT ROADMAP — 14 JULY 2026
 ==================================================
 
+VICTORIA PERMIT CHECKLIST — 15 JULY 2026
+==========================================
+
+- Added a rule-based Permit Checklist for Victorian building and renovation
+  projects without using AI.
+- Project-type and optional scope questions flag possible planning, building,
+  report-and-consent, protection work, owner-builder, trade, pool, demolition,
+  asbestos, council-asset, easement and overlay requirements.
+- Results deliberately use only “Likely required” or “Confirm with authority”;
+  the tool never makes a final “no permit required” decision.
+- Added a project-specific document checklist with completion ticks and notes.
+- Added prominent warnings that the tool can be incomplete or wrong and that
+  council, a registered building surveyor and relevant authorities must confirm
+  the result in writing before work starts.
+- Strengthened every Permit Checklist warning to call the result a best-effort
+  guess that is not always true, cannot prove a permit is or is not required,
+  and must be checked with the correct qualified person or authority.
+- Rechecked the rules against current official Victorian sources on 15 July
+  2026 and display that review date with each generated result.
+- Reworded the final result notice in a calmer, more professional tone while
+  preserving the requirement to obtain written confirmation before proceeding.
+- Added official Victorian source links, Save Draft, Print, Save to Project,
+  reopen/edit support and automatic Schedule follow-up tasks.
+- Connected the tool to dashboard search, Projects, sign-in protection,
+  privacy-safe usage analytics and the offline PWA cache.
+
+Validation completed:
+- Static foundation, secrets and required-warning checks: pass.
+- Rule outcomes for extension, structural work and owner-builder threshold: pass.
+- Generate, document list, Project save, Schedule follow-up and reopen: pass.
+- Existing AI, quote, renovation, property, security and account tests: pass.
+
 OPTIONAL TEAM CODE SIGNUP — 15 JULY 2026
 =========================================
 

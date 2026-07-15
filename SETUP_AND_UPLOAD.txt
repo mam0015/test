@@ -5,7 +5,8 @@ This package keeps the existing black, white and yellow app design and adds:
 secure accounts and team roles, cloud project sync, an editable price catalogue,
 AI audit records, daylight mode, onboarding, search, confirm/undo safeguards,
 offline-capable non-AI tools, a Victoria Property Value Guide, APP-aligned legal
-pages and privacy-safe first-party usage analytics.
+pages, privacy-safe first-party usage analytics and a rule-based Victoria Permit
+Checklist with Project save and authority-verification warnings.
 
 IMPORTANT
 ---------

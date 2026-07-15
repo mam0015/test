@@ -136,5 +136,40 @@ function domFor(html){
   if(!propertyReopened.window.document.querySelector('#restoreNote').classList.contains('show'))throw new Error('Saved property estimate did not reopen from Projects');
   if(!propertyReopened.window.document.querySelector('.estimate-main'))throw new Error('Reopened property estimate did not restore its value guide');
 
-  console.log('PASS: Fast Vision, pricing, Quote Analysis, Projects, Renovation Budget and Property Value Guide UI');
+  const permit=domFor('permit-checklist/index.html');
+  permit.window.confirm=()=>true;
+  permit.window.eval(read('shared/project-store.js'));
+  permit.window.eval(read('permit-checklist/app.js'));
+  const permitResult=permit.window.ACPermitChecklist.assess({projectType:'extension',structural:true,external:true,plumbing:true,electrical:true,boundary:true,deliveryRole:'owner-builder',projectValue:'over20'});
+  if(!permitResult.permits.some(item=>item.id==='planning'&&item.status==='likely'))throw new Error('Extension did not flag a likely planning permit');
+  if(!permitResult.permits.some(item=>item.id==='building'&&item.status==='likely'))throw new Error('Structural extension did not flag a likely building permit');
+  if(!permitResult.permits.some(item=>item.id==='owner-builder'&&item.status==='likely'))throw new Error('Owner-builder threshold did not flag Certificate of Consent');
+  permit.window.document.querySelector('#projectName').value='Permit Smoke Test';
+  permit.window.document.querySelector('#projectType').value='extension';
+  permit.window.document.querySelector('#structural').checked=true;
+  permit.window.document.querySelector('#external').checked=true;
+  permit.window.document.querySelector('#followUpDate').value='2026-07-20';
+  permit.window.document.querySelector('#generate').click();
+  if(!permit.window.document.querySelector('#results').classList.contains('show'))throw new Error('Permit Checklist result did not open');
+  if(!permit.window.document.querySelector('#permitList').textContent.includes('Planning permit'))throw new Error('Permit result did not render its approvals');
+  const permitCapture=await permit.window.ACProjectCapture();
+  if(permitCapture.module!=='permit-checklist'||!permitCapture.data.state||!permitCapture.data.result)throw new Error('Permit project capture is incomplete');
+  const permitProject=permit.window.ACProjects.create({name:'Saved Permit Project'});
+  permit.window.eval(read('shared/project-bridge.js'));
+  permit.window.document.querySelector('.acp-fab').click();
+  permit.window.document.querySelector('#acpProject').value=permitProject.id;
+  permit.window.document.querySelector('.acp-save').click();
+  await waitFor(()=>permit.window.ACProjects.get(permitProject.id).records.length===1,'permit project save');
+  const permitRecord=permit.window.ACProjects.get(permitProject.id).records[0];
+  if(permitRecord.module!=='permit-checklist')throw new Error('Permit checklist was not saved into Projects');
+  if(!permit.window.ACProjects.get(permitProject.id).tasks.some(task=>task.notes===`permit-checklist:${permitRecord.id}`))throw new Error('Permit follow-up task was not scheduled');
+
+  const permitReopened=domFor('permit-checklist/index.html');
+  permitReopened.window.localStorage.setItem('ac_project_permit_restore_v1',JSON.stringify({state:permitCapture.data.state,result:permitCapture.data.result,projectId:permitProject.id,recordId:permitRecord.id}));
+  permitReopened.window.eval(read('shared/project-store.js'));
+  permitReopened.window.eval(read('permit-checklist/app.js'));
+  if(!permitReopened.window.document.querySelector('#restoreNote').classList.contains('show'))throw new Error('Saved Permit Checklist did not reopen from Projects');
+  if(!permitReopened.window.document.querySelector('#permitList').textContent.includes('Building permit'))throw new Error('Reopened Permit Checklist did not restore its results');
+
+  console.log('PASS: Fast Vision, pricing, Quote Analysis, Projects, Renovation Budget, Property Value Guide and Victoria Permit Checklist UI');
 })().catch(error=>{console.error(error);process.exit(1)});

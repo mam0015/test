@@ -1,10 +1,11 @@
-const CACHE='ac-private-ai-analytics-v14';
+const CACHE='ac-permit-checklist-v15';
 const ASSETS=[
   './','./index.html','./offline.html','./manifest.webmanifest',
   './assets/alert-construction-logo-white.svg','./assets/app-icon.svg',
   './electrical/','./plumbing/','./cladding/','./checklist/',
   './renovation-budget/','./renovation-budget/index.html','./renovation-budget/rates.js','./renovation-budget/app.js',
   './property-estimate/','./property-estimate/index.html','./property-estimate/app.js',
+  './permit-checklist/','./permit-checklist/index.html','./permit-checklist/app.js',
   './plan-ai/','./plan-ai/index.html','./plan-ai/styles.css','./plan-ai/config.js','./plan-ai/app.js',
   './quote-analysis/','./quote-analysis/index.html','./quote-analysis/app.js',
   './projects/','./projects/index.html','./projects/app.js',
