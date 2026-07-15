@@ -41,6 +41,15 @@ const jsonResponse=(data,ok=true,status=200)=>({ok,status,json:async()=>data});
   if(!loginDom.window.document.querySelector('#joinChoice').hidden)throw new Error('Owners still see the confusing Join Existing Team box');
   if(!loginDom.window.document.querySelector('#signup').textContent.includes('completely fine'))throw new Error('Signup does not clearly explain that Team Code is optional');
 
+  const recoveryDom=new JSDOM(read('login/index.html'),{url:'https://example.test/login/',runScripts:'outside-only'});recoveryDom.window.HTMLElement.prototype.scrollIntoView=function(){};
+  recoveryDom.window.AC_PLATFORM_CONFIG={supabaseUrl:'https://secure.test',publishableKey:'public'};let recoveredProfile=null,recoveryRequest=null;
+  recoveryDom.window.ACAuth={ready:Promise.resolve(),user:()=>({id:'personal1',email:'personal@example.test',email_confirmed_at:new Date().toISOString(),user_metadata:{organisation_name:'Personal Workspace'}}),profile:()=>recoveredProfile,profileError:()=>recoveredProfile?'':'No authorised team profile was found.',headers:async()=>({Authorization:'Bearer token'}),hasAccess:()=>!!recoveredProfile,isSignedIn:()=>true,loadProfile:async()=>{recoveredProfile={id:'personal1',organisation_id:'personal-org',role:'owner',active:true}},signOut:async()=>{},signIn:async()=>{},signUp:async()=>{},requestPasswordReset:async()=>{},resendVerification:async()=>{},updatePassword:async()=>{}};
+  recoveryDom.window.fetch=async(url,options={})=>{const value=String(url);if(value.includes('/rpc/setup_ac_workspace')){recoveryRequest=JSON.parse(options.body);return jsonResponse({organisation_id:'personal-org',role:'owner',mode:'individual',team_code:'PERSONAL1'})}if(value.includes('/organisations?'))return jsonResponse([{id:'personal-org',name:'Personal Workspace',join_code:'PERSONAL1',join_code_rotated_at:new Date().toISOString()}]);if(value.includes('/profiles?'))return jsonResponse([{id:'personal1',email:'personal@example.test',role:'owner',active:true,updated_at:new Date().toISOString()}]);if(value.includes('/ac_audit_log?')||value.includes('/price_catalogue_history?'))return jsonResponse([]);throw new Error(`Unexpected recovery request ${url}`)};
+  recoveryDom.window.eval(read('login/app.js'));await waitFor(()=>!recoveryDom.window.document.querySelector('#personalChoice').hidden,'individual setup choice');
+  recoveryDom.window.document.querySelector('#personalWorkspaceName').value='Ali Private Workspace';recoveryDom.window.document.querySelector('#createPersonalBtn').click();await waitFor(()=>!recoveryDom.window.document.querySelector('#ownerCode').hidden,'recovered personal Team Code');
+  if(recoveryRequest?.p_team_code!==''||recoveryRequest?.p_name!=='Ali Private Workspace')throw new Error('Continue Individually did not create a blank-code private workspace');
+  if(recoveryDom.window.document.querySelector('#teamCode').textContent!=='PERSONAL1')throw new Error('Recovered individual Owner did not receive a shareable Team Code');
+
   const dashboard=new JSDOM(read('index.html'),{url:'https://example.test/',runScripts:'outside-only'});
   [...dashboard.window.document.querySelectorAll('script:not([src])')].forEach(script=>dashboard.window.eval(script.textContent));
   dashboard.window.document.querySelector('#toolSearch').value='Build plumbing quotes';dashboard.window.document.querySelector('#toolSearch').dispatchEvent(new dashboard.window.Event('input'));
@@ -53,11 +62,13 @@ const jsonResponse=(data,ok=true,status=200)=>({ok,status,json:async()=>data});
   const platform=shellDom.window.document.querySelector('.ac-platform-inline');if(!platform||!platform.textContent.includes('owner@example.test')||platform.querySelector('.ac-signout').hidden)throw new Error('Dashboard account/role/sign-out controls are not visible');
   shellDom.window.dispatchEvent(new shellDom.window.CustomEvent('ac-cloud-status',{detail:{status:'online',message:'Last synced 2:30 pm'}}));if(!platform.textContent.includes('Last synced 2:30 pm'))throw new Error('Dashboard last-synced label did not update');
 
+  const gateDom=new JSDOM('<!doctype html><body></body>',{url:'https://example.test/electrical/',runScripts:'outside-only'});gateDom.window.AC_PLATFORM_CONFIG={enforceInternalLogin:true};gateDom.window.ACAuth={ready:Promise.resolve(),hasAccess:()=>false,isSignedIn:()=>true,profile:()=>null,user:()=>({email:'personal@example.test'}),signOut:async()=>{}};gateDom.window.confirm=()=>false;gateDom.window.eval(read('shared/product-shell.js'));gateDom.window.document.dispatchEvent(new gateDom.window.Event('DOMContentLoaded'));await waitFor(()=>gateDom.window.document.querySelector('.ac-login-gate'),'individual setup gate');if(!gateDom.window.document.querySelector('.ac-login-gate').textContent.includes('no Team Code is required'))throw new Error('Protected tool gate still claims Team Code is required');
+
   const checklist=new JSDOM(read('checklist/index.html'),{url:'https://example.test/checklist/',runScripts:'outside-only'});checklist.window.confirm=()=>true;checklist.window.print=()=>{};
   const checklistScript=[...checklist.window.document.querySelectorAll('script:not([src])')][0];checklist.window.eval(checklistScript.textContent);
   const name=checklist.window.document.querySelector('#projectName');name.value='Undo Test';name.dispatchEvent(new checklist.window.Event('input'));
   checklist.window.document.querySelector('#resetBtn').click();if(name.value!=='')throw new Error('Checklist reset did not clear the form');
   const undo=checklist.window.document.querySelector('.ac-undo button');if(!undo)throw new Error('Checklist reset did not provide Undo');undo.click();if(name.value!=='Undo Test')throw new Error('Checklist Undo did not restore prior data');
 
-  console.log('PASS: optional Team Code signup, Owner UI, revoked access, server catalogue probe, role denial, dashboard search/account/sync and checklist undo');
+  console.log('PASS: optional Team Code, individual recovery/code, Owner UI, access gate, revoked access, catalogue role denial, dashboard search/account/sync and checklist undo');
 })().catch(error=>{console.error(error);process.exit(1)});

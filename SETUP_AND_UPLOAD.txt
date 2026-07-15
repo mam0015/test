@@ -42,6 +42,8 @@ This creates:
 - active-membership checks used by every protected RLS policy.
 - optional Team Code signup and recovery for accounts created before the
   profiles table existed.
+- a self-service Continue Individually option for missing or inactive team
+  profiles. It creates a new private Owner workspace and a shareable Team Code.
 
 Do not disable Row Level Security.
 
@@ -128,6 +130,11 @@ PART D — CREATE THE FIRST OWNER AND TEAM
 10. Test Rotate Code. Confirm the old code stops working.
 11. Test Revoke on a spare team account. Confirm its protected pages lock on
     the next request; then Restore it.
+
+If an older account shows that its team is inactive, open Account & Team and
+choose Continue Individually. This does not require a Team Code. It creates a
+new private workspace, restores access to the tools and displays a new personal
+Team Code that the Owner can copy and share later.
 
 Owners and Estimators can edit company rates. Site Supervisors have read-only
 catalogue access. AI tools, projects, calculators and site records require an

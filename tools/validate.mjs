@@ -76,7 +76,7 @@ for(const marker of ['catalogue_access_probe','set_ac_member_access','rotate_ac_
 if(!catalogue.includes('securityState')||!catalogue.includes('catalogue_access_probe'))fail('Catalogue does not perform its authenticated server access probe');
 if(!auth.includes('requestPasswordReset')||!auth.includes('resendVerification')||!auth.includes('hasAccess'))fail('Account recovery or active access handling is incomplete');
 if(!auth.includes('team_code')||!login.includes('signUpTeamCode')||!login.includes('Leave blank if you do not have one'))fail('Optional Team Code signup is incomplete');
-for(const marker of ['requested_code','site_supervisor','Private Workspace','auth.users','p.id is null'])if(!optionalTeam.includes(marker))fail(`Optional Team Code migration is missing ${marker}`);
+for(const marker of ['requested_code','site_supervisor','Private Workspace','auth.users','p.id is null','setup_ac_workspace','personal_workspace_created','team_code',"grant execute on function public.setup_ac_workspace"])if(!optionalTeam.includes(marker))fail(`Optional Team Code migration is missing ${marker}`);
 if(!shell.includes('ac-signout')||!shell.includes('ac-sync-label'))fail('Dashboard account/sign-out/sync controls are incomplete');
 if(!home.includes('toolSearch')||!home.includes('AI-assisted • Human verification required'))fail('Dashboard search or trust labels are missing');
 if(!home.includes('./property-estimate/index.html')||!read('property-estimate/app.js').includes('comparable-sales'))fail('Property Value Guide is not connected to the dashboard or its evidence method is missing');

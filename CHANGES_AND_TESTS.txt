@@ -12,6 +12,11 @@ OPTIONAL TEAM CODE SIGNUP — 15 JULY 2026
 - Added a safe migration that updates future signup behaviour and gives
   accounts created before the profiles table existed a private Owner workspace.
 - Bumped the offline cache so the corrected account page replaces old copies.
+- Added Continue Individually for missing or inactive workspace profiles.
+- Individual recovery creates a private Owner workspace, immediately restores
+  tool access and generates a Team Code that can be copied and shared.
+- Reworded the protected-tool gate so it no longer claims a Team Code or Owner
+  restoration is the only way to continue.
 
 Validation completed:
 - Blank-code and supplied-code signup payloads: pass.
