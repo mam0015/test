@@ -1,4 +1,3 @@
-import { withSupabase } from "jsr:@supabase/server@^1";
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 const ALLOWED_ORIGINS=new Set(["https://mam0015.github.io","http://localhost:4173","http://127.0.0.1:4173"]);
@@ -66,6 +65,23 @@ function cors(origin:string|null){const allowed=origin&&ALLOWED_ORIGINS.has(orig
 function json(body:unknown,status:number,origin:string|null){return new Response(JSON.stringify(body),{status,headers:{...cors(origin),"Content-Type":"application/json"}})}
 function outputText(response:any){if(typeof response?.output_text==="string")return response.output_text;for(const output of response?.output||[])for(const content of output?.content||[])if(content.type==="output_text"&&typeof content.text==="string")return content.text;return""}
 function round(value:number){return Math.round((Number(value)||0)*100)/100}
+
+async function requireSignedInUser(request:Request,origin:string|null){
+  const authorization=request.headers.get("authorization")||"";
+  if(!/^Bearer\s+\S+$/i.test(authorization))return{response:json({error:"Sign in before using AI analysis."},401,origin)};
+  const url=Deno.env.get("SUPABASE_URL")||"",apikey=Deno.env.get("SUPABASE_ANON_KEY")||request.headers.get("apikey")||"";
+  if(!url||!apikey)return{response:json({error:"Secure account verification is not configured."},503,origin)};
+  try{
+    const response=await fetch(`${url}/auth/v1/user`,{headers:{apikey,"Authorization":authorization}});
+    if(!response.ok)return{response:json({error:"Your secure session is invalid or expired. Sign in again."},401,origin)};
+    const user=await response.json();
+    if(!user?.id)return{response:json({error:"Your secure session could not be verified. Sign in again."},401,origin)};
+    return{user};
+  }catch(error){
+    console.error("auth verification error",error instanceof Error?error.message:error);
+    return{response:json({error:"Secure account verification is temporarily unavailable."},503,origin)};
+  }
+}
 
 async function callOpenAI(apiKey:string,payload:Record<string,unknown>){
   const response=await fetch("https://api.openai.com/v1/responses",{method:"POST",headers:{"Authorization":`Bearer ${apiKey}`,"Content-Type":"application/json"},body:JSON.stringify(payload)});
@@ -198,20 +214,14 @@ async function processRequest(request:Request){
   }catch(error){console.error("analysis error",error instanceof Error?error.message:error);return json({error:"AI analysis failed. Check the Edge Function logs and OPENAI_API_KEY, then try again."},500,origin)}
 }
 
-const authenticatedFetch=withSupabase({auth:["publishable","secret"]},async(request,ctx)=>{
-  const origin=request.headers.get("origin");
-  // Public browser calls must come from the deployed Alert Construction origin.
-  // Secret-key server calls may omit Origin for controlled testing and automation.
-  if(String(ctx.authMode).startsWith("publishable")&&!origin)return json({error:"Origin required."},403,origin);
-  if(String(ctx.authMode).startsWith("publishable")&&!/^Bearer\s+ey/i.test(request.headers.get("authorization")||""))return json({error:"Sign in before using AI analysis."},401,origin);
-  return processRequest(request);
-});
-
 export default {
-  fetch(request:Request){
+  async fetch(request:Request){
     const origin=request.headers.get("origin");
     if(origin&&!ALLOWED_ORIGINS.has(origin))return json({error:"Origin not allowed."},403,origin);
     if(request.method==="OPTIONS")return new Response("ok",{headers:cors(origin)});
-    return authenticatedFetch(request);
+    if(!origin)return json({error:"Origin required."},403,origin);
+    const auth=await requireSignedInUser(request,origin);
+    if(auth.response)return auth.response;
+    return processRequest(request);
   }
 };

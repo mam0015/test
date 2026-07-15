@@ -40,12 +40,18 @@
       host.innerHTML=rows.length?rows.map(row=>{const actor=membersById[row.actor_id||row.changed_by]||'Authorised user',title=row.kind==='price'?`Catalogue ${row.action}: ${row.item_key}`:describeAudit(row),detail=row.kind==='price'?(row.action==='update'?`${row.old_value?.builder_rate??'—'} → ${row.new_value?.builder_rate??'—'} ex GST`:'Versioned catalogue change'):(row.details?.title||row.module||'Team account');return `<div class="activity-row"><div><strong>${esc(title)}</strong><span>${esc(actor)} • ${esc(detail)}</span></div><time>${new Date(row.created_at).toLocaleString('en-AU')}</time></div>`}).join(''):'<div class="activity-row"><strong>No audited changes yet.</strong><span>Saved project records and catalogue edits will appear here.</span></div>';
     }catch(error){host.innerHTML=`<div class="activity-row"><strong>Activity unavailable</strong><span>${esc(error.message)}</span></div>`}
   }
+  function toolLabel(value){return String(value||'tool').split('-').map(word=>word.charAt(0).toUpperCase()+word.slice(1)).join(' ')}
+  async function renderUsage(profile){
+    const section=$('usageSection'),host=$('usageGrid'),owner=profile?.active!==false&&profile?.role==='owner';section.hidden=!owner;if(!owner)return;
+    try{const rows=await rpc('ac_usage_summary',{p_days:30});host.innerHTML=Array.isArray(rows)&&rows.length?rows.map(row=>`<div class="usage-item"><strong>${Number(row.uses)||0}</strong><span>${esc(toolLabel(row.tool))} • ${Number(row.unique_users)||0} user${Number(row.unique_users)===1?'':'s'}<br>Last used ${row.last_used?new Date(row.last_used).toLocaleString('en-AU'):'—'}</span></div>`).join(''):'<div class="activity-row"><strong>No usage recorded yet</strong><span>Tool opens will appear after the analytics migration is installed.</span></div>'}
+    catch(error){host.innerHTML=`<div class="activity-row"><strong>Usage unavailable</strong><span>${esc(error.message)}</span></div>`}
+  }
   async function render(){
     await ACAuth.ready;const user=ACAuth.user(),profile=ACAuth.profile();$('guest').hidden=!!user;$('account').classList.toggle('show',!!user);if(!user)return;
     const active=!!profile?.organisation_id&&profile.active!==false;$('accountEmail').textContent=user.email||'';$('accountRole').textContent=active?(profile.role||'member').replace('_',' '):profile?.active===false?'Previous team inactive · individual setup available':'Individual setup available';$('accountRole').className=active?'':'status-bad';$('verificationState').textContent=user.email_confirmed_at?'Verified':'Pending verification';$('verificationState').className=user.email_confirmed_at?'status-good':'status-bad';
     const org=await organisation(profile);$('accountCompany').textContent=active?(org?.name||user.user_metadata?.organisation_name||'Workspace'):'Choose individual or team';$('cloudState').textContent=active?'Connected with RLS':'Ready to create individual workspace';$('catalogueState').textContent=active?'Checked by server on open':'Available after workspace setup';$('teamArea').hidden=false;$('personalChoice').hidden=active;$('joinChoice').hidden=active;
     const owner=active&&profile.role==='owner';if(owner&&org?.join_code){$('ownerCode').hidden=false;$('teamCode').textContent=org.join_code;$('codeAge').textContent=org.join_code_rotated_at?`Rotated ${new Date(org.join_code_rotated_at).toLocaleString('en-AU')}`:''}else $('ownerCode').hidden=true;
-    await renderTeam(profile);await renderActivity(profile);
+    await renderTeam(profile);await renderActivity(profile);await renderUsage(profile);
   }
   const redirectType=sessionStorage.getItem('ac_auth_redirect_type');if(redirectType){sessionStorage.removeItem('ac_auth_redirect_type');setTimeout(()=>message(redirectType==='recovery'?'Secure recovery link accepted. Enter a new password below.':'Secure email link accepted.','good'),0)}
   render();

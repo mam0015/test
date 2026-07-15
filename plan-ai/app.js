@@ -98,6 +98,7 @@
         state.responseId=data.responseId||null;state.analysis=data.analysis;
         if(state.analysis){state.analysis.method=state.method;state.analysis.confidence=state.method==='fast'?'Medium — check every count':'Higher — still requires trade review'}
         removeThinking(thinking);renderAnalysis(data.analysis);
+        if(data.analysis?.status==='success')window.ACAnalytics?.track?.('estimate_completed','ai-plan-estimator');
       }else{
         data=await callFunction({mode:'question',trade:state.trade,previousResponseId:state.responseId,question});
         state.responseId=data.responseId||state.responseId;removeThinking(thinking);addMessage(data.answer||'No answer was returned.','assistant');

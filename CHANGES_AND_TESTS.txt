@@ -172,3 +172,24 @@ Not possible without the owner's live credentials
 
 Always verify AI quantities against the legend and have the relevant licensed
 trade/Builder confirm scope before issuing a real quote.
+AI SECURITY, LEGAL AND ANALYTICS — 15 JULY 2026
+===============================================
+
+- Replaced the ineffective AI auth-mode wrapper with direct Supabase Auth user
+  verification for every Edge Function request.
+- Requests without an Origin, valid bearer token or verified Supabase user now
+  fail before file validation and before any OpenAI call.
+- Added an APP-aligned Privacy Policy and Australian Terms of Use.
+- Added prominent estimate-only/not-a-valuation/not-a-quote disclaimers to the
+  Property Value Guide, AI Plan Estimator and Quote Price Analysis.
+- Added Privacy and Terms links to every app page and a collection notice to
+  Create Account.
+- Added first-party Supabase usage analytics with no plan, quote, address,
+  notes, search text, uploaded file or estimate-value collection.
+- Added Owner-only 30-day Usage Insights and 180-day detailed event retention.
+- Added legal and analytics files to the offline cache.
+
+Deployment required:
+- Run supabase/migrations/20260715_privacy_analytics.sql.
+- Redeploy supabase/functions/analyse-plan/index.ts.
+- Set supportEmail in shared/platform-config.js before production.

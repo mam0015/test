@@ -21,6 +21,7 @@
       ACProjects.setActive(projectId);if(typeof window.ACProjectSaved==='function')window.ACProjectSaved({projectId,recordId:entry.id,module:capture.module,updated});
       await window.ACAuth?.audit?.(updated?'project_record_updated':'project_record_created',{projectId,recordId:entry.id,module:capture.module,details:{title:capture.title,summary:capture.summary,human_changes:capture.data?.audit?.humanChanges||[],generated_at:capture.data?.audit?.generatedAt||null,saved_at:capture.data?.audit?.savedAt||new Date().toISOString()}});
       if((capture.data?.audit?.humanChanges||[]).length)await window.ACAuth?.audit?.('ai_result_corrected',{projectId,recordId:entry.id,module:capture.module,details:{title:capture.title,corrections:capture.data.audit.humanChanges,generated_at:capture.data.audit.generatedAt||null,saved_at:capture.data.audit.savedAt||new Date().toISOString()}});
+      window.ACAnalytics?.track?.('record_saved',String(capture.module||'project-record'));
       close();toast((updated?'Updated in ':'Saved to ')+ACProjects.get(projectId).name);
     }catch(error){alert(error.message||'The record could not be saved.')}
     finally{save.disabled=false;save.textContent='Save'}

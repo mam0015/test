@@ -10,7 +10,10 @@
     requireLoginForAI:true,
     cloudSyncEnabled:true,
     catalogueCloudEnabled:true,
+    analyticsEnabled:true,
+    analyticsRetentionDays:180,
     supportEmail:'',
+    privacyPolicyVersion:'2026-07-15',
     schemaVersion:1
   };
 })(window);

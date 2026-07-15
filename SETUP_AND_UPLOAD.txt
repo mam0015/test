@@ -4,7 +4,8 @@ ALERT CONSTRUCTION — PRODUCT FOUNDATION SETUP
 This package keeps the existing black, white and yellow app design and adds:
 secure accounts and team roles, cloud project sync, an editable price catalogue,
 AI audit records, daylight mode, onboarding, search, confirm/undo safeguards,
-offline-capable non-AI tools and a Victoria Property Value Guide.
+offline-capable non-AI tools, a Victoria Property Value Guide, APP-aligned legal
+pages and privacy-safe first-party usage analytics.
 
 IMPORTANT
 ---------
@@ -22,12 +23,13 @@ PART A — CREATE THE SECURE DATABASE FOUNDATION
    supabase/migrations/20260714_product_foundation.sql
    supabase/migrations/20260714_security_audit_hardening.sql
    supabase/migrations/20260715_optional_team_code.sql
+   supabase/migrations/20260715_privacy_analytics.sql
 
 If Supabase reports `relation "public.profiles" does not exist`, the second
 file was run before the foundation. Stop, open a new SQL query, run the COMPLETE
 20260714_product_foundation.sql file first, wait for Success, and only then run
-20260714_security_audit_hardening.sql and 20260715_optional_team_code.sql. Do
-not run selected fragments.
+20260714_security_audit_hardening.sql, 20260715_optional_team_code.sql and
+20260715_privacy_analytics.sql. Do not run selected fragments.
 
 This creates:
 - organisations and private team codes;
@@ -44,6 +46,8 @@ This creates:
   profiles table existed.
 - a self-service Continue Individually option for missing or inactive team
   profiles. It creates a new private Owner workspace and a shareable Team Code.
+- limited first-party tool-usage events and an Owner-only 30-day usage summary.
+- 180-day detailed usage-event retention applied during normal event writes.
 
 Do not disable Row Level Security.
 
@@ -74,9 +78,25 @@ Dashboard method:
 CLI method:
   supabase functions deploy analyse-plan --no-verify-jwt
 
-The function now requires a signed-in Supabase user, uses the authenticated
-company catalogue where an office rate override exists, and never exposes the
-OpenAI key to the browser.
+The function now verifies every bearer token directly with Supabase Auth before
+it validates an upload or calls OpenAI. It uses the authenticated company
+catalogue where an office rate override exists and never exposes the OpenAI key
+to the browser. A publishable key without a valid user token must receive HTTP
+401, not a file-validation message.
+
+
+PART B2 — SET THE PRIVACY CONTACT BEFORE PRODUCTION
+----------------------------------------------------
+
+Open shared/platform-config.js and set:
+
+  supportEmail:'your-monitored-privacy-email@example.com'
+
+Use a real monitored business address. The Privacy Policy deliberately shows a
+configuration warning while this value is blank. This contact is needed for
+privacy access, correction and complaint requests. Have an Australian lawyer
+review the Privacy Policy and Terms before paid memberships or public customer
+access.
 
 
 PART C — UPLOAD THE WEBSITE TO GITHUB
@@ -154,6 +174,8 @@ Test these pages after signing in:
 - AI Plan Estimator (Fast and Smart)
 - Quote Price Analysis
 - Site Checklist
+- Privacy Policy and Terms of Use
+- Account > Usage insights (Owner only, after opening several tools)
 
 Cross-device test:
 1. Create a project and save an estimate on device A.
@@ -252,6 +274,8 @@ SECURITY NOTES
 - The browser contains only the Supabase publishable key. This is expected.
 - No OpenAI secret or Supabase service-role key belongs in GitHub.
 - AI calls require both the publishable key and a signed-in user access token.
+- The Edge Function validates that token against /auth/v1/user and fails closed
+  if account verification is unavailable.
 - The Catalogue page calls catalogue_access_probe on the server before showing
   any live catalogue rows. Supabase RLS independently enforces organisation and
   role access on every catalogue request and write.
@@ -265,3 +289,20 @@ SECURITY NOTES
 - Customer estimates should show customer totals, not builder-rate breakdowns.
 - Every AI result remains preliminary and must be checked by the Builder or
   relevant licensed trade before being issued as a quote.
+
+
+PRIVACY-SAFE USAGE ANALYTICS
+----------------------------
+
+The app uses its existing Supabase backend instead of a third-party analytics
+cookie. It records only:
+- event type;
+- tool name;
+- pathname without query strings;
+- signed-in user/workspace identifiers; and
+- timestamp.
+
+It does NOT send plans, quote contents, project names, addresses, notes, search
+text, uploaded files, quantities or estimate values to analytics. Only Owners
+can view the 30-day tool-open summary on the Account page. Detailed events are
+limited to 180 days by the database function.

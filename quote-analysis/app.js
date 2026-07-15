@@ -100,7 +100,7 @@
         notes:String(item.notes||'')
       }));
       state.originalItems=JSON.parse(JSON.stringify(state.items));
-      finishProgress();renderResults();
+      finishProgress();renderResults();window.ACAnalytics?.track?.('estimate_completed','quote-price-analysis');
     }catch(error){stopProgress();showError(error.message||'The quote could not be reviewed.');}
     finally{setBusy(false)}
   }
