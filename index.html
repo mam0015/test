@@ -54,7 +54,9 @@
     .tools-title svg{width:25px;height:25px;stroke:var(--yellow)}
     .today-alert{display:none;align-items:center;justify-content:space-between;gap:14px;margin-top:36px;padding:16px 18px;border:1px solid rgba(245,180,0,.55);border-radius:17px;background:rgba(245,180,0,.08)}
     .today-alert.show{display:flex}.today-alert strong,.today-alert span{display:block}.today-alert span{color:#cfcfcf;font-size:13px;margin-top:3px}.today-alert a{flex:none;padding:10px 13px;border-radius:12px;background:var(--yellow);color:#050505;font-weight:900}
-    .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:22px}
+    .tool-filter{display:grid;grid-template-columns:1fr 220px;gap:10px;margin-top:22px;padding:12px;border:1px solid var(--line);border-radius:16px;background:rgba(17,17,17,.92)}
+    .tool-filter input,.tool-filter select{min-height:48px;padding:10px 12px;border:1px solid #353535;border-radius:11px;background:#202020;color:#fff}.tool-filter input:focus,.tool-filter select:focus{outline:2px solid rgba(245,180,0,.5);border-color:var(--yellow)}
+    .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:14px}.tools-grid .tool[hidden]{display:none}
     .tool{
       min-height:330px;border:1px solid var(--line-yellow);border-radius:22px;padding:28px 24px 24px;
       background:linear-gradient(145deg,rgba(30,30,30,.95),rgba(8,8,8,.97));
@@ -66,7 +68,7 @@
     .tool-icon{width:78px;height:78px;display:grid;place-items:center;color:var(--yellow);margin:4px 0 18px}
     .tool-icon svg{width:70px;height:70px;stroke:currentColor;stroke-width:1.65;fill:none;stroke-linecap:round;stroke-linejoin:round}
     .tool h2{font-size:clamp(22px,2vw,30px);line-height:1.15;letter-spacing:-.035em;margin:0}
-    .tool p{color:var(--muted);font-size:15px;line-height:1.5;margin:14px 0 24px;max-width:230px}
+    .tool p{color:var(--muted);font-size:15px;line-height:1.5;margin:14px 0 12px;max-width:230px}.trust{display:inline-flex;align-items:center;min-height:26px;margin-bottom:16px;padding:5px 9px;border:1px solid rgba(245,180,0,.35);border-radius:99px;background:rgba(245,180,0,.08);color:#ffd15a;font-size:10px;font-weight:900;letter-spacing:.03em}
     .go{margin-top:auto;width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:var(--yellow);color:#070707;box-shadow:0 12px 30px rgba(245,180,0,.22)}
     .go svg{width:25px;height:25px;stroke:currentColor;stroke-width:2.3;fill:none}
     .footer{position:relative;z-index:3;border-top:1px solid rgba(245,180,0,.2);display:flex;justify-content:space-between;gap:20px;align-items:center;padding:24px clamp(20px,4vw,64px);color:#989898;background:#050505;font-size:13px}
@@ -77,9 +79,9 @@
       .hero{min-height:auto}
     }
     @media(max-width:680px){
-      .topbar{height:82px;padding:0 16px}.brand img{width:190px;height:56px}.nav span{display:none}.nav a{padding:15px 4px 12px}
+      .topbar{height:82px;padding:0 10px}.brand img{width:170px;height:56px}.nav{display:none}.nav span{display:none}.nav a{padding:15px 4px 12px}
       .hero-inner{padding:58px 14px 40px}.hero{background-position:62% center}.intro{max-width:92%}
-      .tools-title{margin-top:52px}.tools-grid{grid-template-columns:1fr;gap:14px}.tool{min-height:280px;border-radius:20px;padding:24px 18px 20px}
+      .tools-title{margin-top:52px}.tool-filter{grid-template-columns:1fr}.tools-grid{grid-template-columns:1fr;gap:14px}.tool{min-height:280px;border-radius:20px;padding:24px 18px 20px}
       .footer{align-items:flex-start;flex-direction:column}
     }
     @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
@@ -119,67 +121,81 @@
           Tools
         </div>
 
+        <div class="tool-filter" aria-label="Find a tool">
+          <input id="toolSearch" type="search" placeholder="Search electrical, renovation, quote, project…" aria-label="Search tools">
+          <select id="toolCategory" aria-label="Filter tools by category"><option value="">All categories</option><option value="estimate">Estimating</option><option value="ai">AI assisted</option><option value="operations">Projects & site</option><option value="admin">Administration</option></select>
+        </div>
+
         <section class="tools-grid" aria-label="Alert Construction tools">
-          <a class="tool" href="./electrical/index.html" data-tool="electrical">
+          <a class="tool" href="./electrical/index.html" data-tool="electrical" data-category="estimate">
             <div class="tool-icon"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M36 3 15 35h16l-4 26 22-34H34z"></path></svg></div>
             <h2>Electrical<br>Estimate</h2>
             <p>Create electrical quotes quickly and accurately.</p>
+            <span class="trust">Rule-based • No AI</span>
             <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span>
           </a>
 
-          <a class="tool" href="./plumbing/index.html" data-tool="plumbing">
+          <a class="tool" href="./plumbing/index.html" data-tool="plumbing" data-category="estimate">
             <div class="tool-icon"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M18 22h23"></path><path d="M23 22v-8h19"></path><path d="M42 14V9"></path><path d="M37 9h10"></path><path d="M18 22v10"></path><path d="M10 32h24v10H10z"></path><path d="M34 37h10c7 0 10 5 10 10"></path><path d="M54 47c0 4-3 7-7 7s-7-3-7-7"></path></svg></div>
             <h2>Plumbing<br>Estimate</h2>
             <p>Build plumbing quotes with live totals and clear items.</p>
+            <span class="trust">Rule-based • No AI</span>
             <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span>
           </a>
 
-          <a class="tool" href="./cladding/index.html" data-tool="cladding">
+          <a class="tool" href="./cladding/index.html" data-tool="cladding" data-category="estimate">
             <div class="tool-icon"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 18 30 7l26 13v31L34 61 8 49z"></path><path d="M30 7v41"></path><path d="m8 18 22 10 26-8"></path><path d="m30 48 26-11"></path></svg></div>
             <h2>Cladding<br>Estimate</h2>
             <p>Quote cladding materials, trims and delivery.</p>
+            <span class="trust">Rule-based • No AI</span>
             <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span>
           </a>
 
-          <a class="tool" href="./renovation-budget/index.html" data-tool="renovation-budget">
+          <a class="tool" href="./renovation-budget/index.html" data-tool="renovation-budget" data-category="estimate">
             <div class="tool-icon"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M9 29 32 9l23 20"></path><path d="M15 26v29h34V26"></path><path d="M24 55V39h16v16"></path><path d="M21 31h22"></path><path d="M28 25h8"></path></svg></div>
             <h2>Renovation Budget<br>Planner</h2>
             <p>Choose renovation areas, answer guided questions and compare the estimate with your budget.</p>
+            <span class="trust">Rule-based • No AI</span>
             <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span>
           </a>
 
-          <a class="tool" href="./plan-ai/index.html" data-tool="plan-ai">
+          <a class="tool" href="./plan-ai/index.html" data-tool="plan-ai" data-category="ai">
             <div class="tool-icon"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M12 8h31l9 9v39H12z"></path><path d="M43 8v10h9"></path><path d="M20 27h16M20 35h12M44 31v12M38 37h12"></path></svg></div>
             <h2>AI Plan<br>Estimator</h2>
             <p>Upload a plan, ask questions and estimate electrical, plumbing or cladding.</p>
+            <span class="trust">AI-assisted • Human verification required</span>
             <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span>
           </a>
 
-          <a class="tool" href="./quote-analysis/index.html" data-tool="quote-analysis">
+          <a class="tool" href="./quote-analysis/index.html" data-tool="quote-analysis" data-category="ai">
             <div class="tool-icon"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M12 8h40v48H12z"></path><path d="M20 20h24"></path><path d="M20 29h14"></path><path d="M20 45l8-8 7 6 10-13"></path></svg></div>
             <h2>Quote Price<br>Analysis</h2>
             <p>Upload a trade quote and check every item against our rates.</p>
+            <span class="trust">AI-assisted • Human verification required</span>
             <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span>
           </a>
 
-          <a class="tool" href="./projects/index.html" data-tool="projects">
+          <a class="tool" href="./projects/index.html" data-tool="projects" data-category="operations">
             <div class="tool-icon"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 16h19l5 6h24v32H8z"></path><path d="M18 34h28M18 43h20"></path></svg></div>
             <h2>Projects &<br>Schedule</h2>
             <p>Save every estimate and see today’s project tasks.</p>
+            <span class="trust">Team record • Audited</span>
             <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span>
           </a>
 
-          <a class="tool" href="./catalogue/index.html" data-tool="catalogue">
+          <a class="tool" href="./catalogue/index.html" data-tool="catalogue" data-category="admin">
             <div class="tool-icon"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M12 10h40v44H12z"></path><path d="M20 21h24M20 31h24M20 41h13"></path><path d="M43 38v12M37 44h12"></path></svg></div>
             <h2>Live Price<br>Catalogue</h2>
             <p>Update company rates and add new trade items without changing the code.</p>
+            <span class="trust">RLS protected • Versioned</span>
             <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span>
           </a>
 
-          <a class="tool" href="./checklist/index.html" data-tool="checklist">
+          <a class="tool" href="./checklist/index.html" data-tool="checklist" data-category="operations">
             <div class="tool-icon"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M20 10h24l8 8v38H12V10z"></path><path d="M24 10c0-5 3-7 8-7s8 2 8 7"></path><path d="m20 28 4 4 7-8"></path><path d="M35 28h10"></path><path d="m20 41 4 4 7-8"></path><path d="M35 41h10"></path></svg></div>
             <h2>Site Supervisor<br>Checklist</h2>
             <p>Manage site inspection tasks and visit notes.</p>
+            <span class="trust">Field-ready • Offline</span>
             <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span>
           </a>
         </section>
@@ -201,6 +217,11 @@
         alertBox.classList.add('show');
       }
     }
+    (function(){
+      var search=document.getElementById('toolSearch'),category=document.getElementById('toolCategory'),tools=Array.prototype.slice.call(document.querySelectorAll('.tools-grid .tool'));
+      function filter(){var q=(search.value||'').toLowerCase().trim(),group=category.value;tools.forEach(function(tool){var matchText=!q||tool.textContent.toLowerCase().indexOf(q)>-1||tool.dataset.tool.indexOf(q)>-1,matchGroup=!group||tool.dataset.category===group;tool.hidden=!(matchText&&matchGroup)})}
+      search.addEventListener('input',filter);category.addEventListener('change',filter);
+    })();
   </script>
   <script src="./shared/product-shell.js"></script>
   <script src="./shared/cloud-sync.js"></script>

@@ -18,7 +18,10 @@
       let entry=null,updated=false;
       if(capture.recordRef&&capture.recordRef.projectId===projectId&&capture.recordRef.recordId){entry=ACProjects.updateRecord(projectId,capture.recordRef.recordId,{title:capture.title,summary:capture.summary,data:capture.data});updated=!!entry}
       if(!entry)entry=ACProjects.addRecord(projectId,{module:capture.module,title:capture.title,summary:capture.summary,data:capture.data,attachmentId:attachment?.id||null,attachmentName:attachment?.name||''});
-      ACProjects.setActive(projectId);if(typeof window.ACProjectSaved==='function')window.ACProjectSaved({projectId,recordId:entry.id,module:capture.module,updated});close();toast((updated?'Updated in ':'Saved to ')+ACProjects.get(projectId).name);
+      ACProjects.setActive(projectId);if(typeof window.ACProjectSaved==='function')window.ACProjectSaved({projectId,recordId:entry.id,module:capture.module,updated});
+      await window.ACAuth?.audit?.(updated?'project_record_updated':'project_record_created',{projectId,recordId:entry.id,module:capture.module,details:{title:capture.title,summary:capture.summary,human_changes:capture.data?.audit?.humanChanges||[],generated_at:capture.data?.audit?.generatedAt||null,saved_at:capture.data?.audit?.savedAt||new Date().toISOString()}});
+      if((capture.data?.audit?.humanChanges||[]).length)await window.ACAuth?.audit?.('ai_result_corrected',{projectId,recordId:entry.id,module:capture.module,details:{title:capture.title,corrections:capture.data.audit.humanChanges,generated_at:capture.data.audit.generatedAt||null,saved_at:capture.data.audit.savedAt||new Date().toISOString()}});
+      close();toast((updated?'Updated in ':'Saved to ')+ACProjects.get(projectId).name);
     }catch(error){alert(error.message||'The record could not be saved.')}
     finally{save.disabled=false;save.textContent='Save'}
   });

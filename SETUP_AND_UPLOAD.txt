@@ -17,9 +17,10 @@ PART A — CREATE THE SECURE DATABASE FOUNDATION
 
 1. Open the existing Supabase project.
 2. Open SQL Editor > New query.
-3. Copy and run the complete file:
+3. Copy and run the complete files IN THIS ORDER:
 
    supabase/migrations/20260714_product_foundation.sql
+   supabase/migrations/20260714_security_audit_hardening.sql
 
 This creates:
 - organisations and private team codes;
@@ -29,6 +30,9 @@ This creates:
 - the editable price catalogue and price history;
 - AI/project audit records;
 - Row Level Security policies.
+- an authenticated server probe for catalogue access;
+- rotatable team codes and immediate member revocation;
+- active-membership checks used by every protected RLS policy.
 
 Do not disable Row Level Security.
 
@@ -107,6 +111,9 @@ PART D — CREATE THE FIRST OWNER AND TEAM
    - Owner
    - Office / Estimator
    - Site Supervisor
+9. Test Rotate Code. Confirm the old code stops working.
+10. Test Revoke on a spare team account. Confirm its protected pages lock on
+    the next request; then Restore it.
 
 Owners and Estimators can edit company rates. Site Supervisors have read-only
 catalogue access. AI tools, projects, calculators and site records require an
@@ -143,7 +150,8 @@ OFFLINE AND DAYLIGHT USE
 - The calculators, renovation planner, saved local projects and checklist work
   without a signal after they have been cached.
 - AI Plan Estimator and Quote Analysis require internet access.
-- Use the bottom-left Day/Dark button for bright outdoor conditions.
+- Use the Day/Dark button in the dashboard account header (or the floating
+  product bar on internal pages) for bright outdoor conditions.
 
 
 PRICE CATALOGUE AND LEGACY RATES
@@ -199,6 +207,16 @@ SECURITY NOTES
 - The browser contains only the Supabase publishable key. This is expected.
 - No OpenAI secret or Supabase service-role key belongs in GitHub.
 - AI calls require both the publishable key and a signed-in user access token.
+- The Catalogue page calls catalogue_access_probe on the server before showing
+  any live catalogue rows. Supabase RLS independently enforces organisation and
+  role access on every catalogue request and write.
+- A hidden page is not treated as security. Revoked profiles are excluded by
+  current_organisation_id/current_ac_role, so old sessions lose database access.
+- Owners can rotate the shared join code and revoke or restore team members.
+  Revoking a member also rotates the code automatically; revoked accounts
+  cannot use a remembered code to rejoin.
+- Enable Confirm email in Supabase Authentication settings. Password reset and
+  verification-email resend controls are included on the Account page.
 - Customer estimates should show customer totals, not builder-rate breakdowns.
 - Every AI result remains preliminary and must be checked by the Builder or
   relevant licensed trade before being issued as a quote.

@@ -94,7 +94,7 @@
 
   <div class="hero">
     <div class="brand">
-      <div class="logo">A</div>
+      <div class="logo">AC</div>
       <div>
         <h1>Site Supervisor Checklist</h1>
         <p class="subtitle">Melbourne site inspection &amp; visit notes</p>
@@ -141,6 +141,7 @@
       <button class="btn btn-ghost" id="collapseAllBtn">Collapse All</button>
       <button class="btn btn-danger" id="resetBtn">Reset Checklist</button>
     </div>
+    <p class="save-note">Reset asks for confirmation and provides a 7-second Undo option.</p>
     <div class="save-note" id="saveNote"></div>
   </div>
 </div>
@@ -297,10 +298,22 @@ document.getElementById("collapseAllBtn").addEventListener("click", () => {
 
 document.getElementById("resetBtn").addEventListener("click", () => {
   if (confirm("Reset the entire checklist? This clears all checkboxes, notes and site visit details on this device.")){
+    const previousState = JSON.parse(JSON.stringify(state));
     state = { fields:{}, items:{}, open:{} };
     saveState();
     FIELD_IDS.forEach(id => { const el = document.getElementById(id); if (el) el.value = ""; });
     buildSections();
+    document.querySelector('.ac-undo')?.remove();
+    const undo = document.createElement('div');
+    undo.className = 'ac-undo';
+    undo.innerHTML = '<span>Checklist reset</span><button type="button">Undo</button>';
+    document.body.appendChild(undo);
+    const timer = setTimeout(() => undo.remove(), 7000);
+    undo.querySelector('button').addEventListener('click', () => {
+      clearTimeout(timer);state = previousState;saveState();
+      FIELD_IDS.forEach(id => { const el=document.getElementById(id);if(el)el.value=state.fields[id]||""; });
+      buildSections();undo.remove();
+    });
   }
 });
 

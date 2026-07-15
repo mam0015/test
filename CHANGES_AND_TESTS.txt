@@ -1,6 +1,31 @@
 PRODUCT FOUNDATION & CLIENT ROADMAP — 14 JULY 2026
 ==================================================
 
+SECURITY & AUDIT HARDENING — CLIENT REVIEW PASS
+===============================================
+
+- Added a real authenticated catalogue_access_probe server check.
+- Catalogue rows now remain hidden if the server/RLS check cannot be verified.
+- Added active membership enforcement to organisation and role RLS helpers.
+- Added Owner controls to rotate the team code and revoke/restore a member.
+- Added account, role, sign-out and last-synced information to the dashboard.
+- Made Owner, Office/Estimator and Site Supervisor permissions visible.
+- Added recent activity showing catalogue versions, project/AI saves and team
+  access changes with actor identity and timestamps.
+- Added server audit writes when a project or corrected AI result is saved.
+- Added per-correction correctedBy and correctedAt metadata.
+- Added dashboard tool search, category filtering and trust labels.
+- Made daylight mode visible in the dashboard header without changing the
+  existing black, white and yellow default theme.
+- Added password-reset, verification resend and email verification status.
+- Added explicit confirmation/Undo copy to calculator clears and checklist
+  reset; checklist reset now has a seven-second Undo action.
+- Standardised the Electrical page title and Checklist AC mark.
+
+Deployment required for this review pass:
+- Run supabase/migrations/20260714_security_audit_hardening.sql after the
+  original product foundation migration.
+
 - Added secure Supabase email/password accounts.
 - Added Owner, Office/Estimator and Site Supervisor roles.
 - Added private team joining codes and Owner role management.

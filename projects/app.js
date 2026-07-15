@@ -31,7 +31,7 @@
   function showTab(name){document.querySelectorAll('.tab').forEach(button=>button.classList.toggle('active',button.dataset.tab===name));document.querySelectorAll('.tab-panel').forEach(panel=>panel.classList.toggle('active',panel.dataset.panel===name))}
 
   $('saveDetailsBtn').addEventListener('click',()=>{if(!currentId)return;store.update(currentId,{name:$('editName').value,address:$('editAddress').value,client:$('editClient').value,status:$('editStatus').value,notes:$('editNotes').value});render();showTab('details');toast('Project details saved')});
-  $('deleteProjectBtn').addEventListener('click',async()=>{const project=current();if(!project||!confirm(`Delete "${project.name}" and all of its saved records, tasks and attachments from this device?`))return;await store.remove(project.id);currentId=store.list()[0]?.id||'';render()});
+  $('deleteProjectBtn').addEventListener('click',async()=>{const project=current();if(!project||!confirm(`Delete "${project.name}" and all of its saved records, tasks and attachments from this device?`))return;await store.remove(project.id);await window.ACAuth?.audit?.('project_deleted',{projectId:project.id,module:'projects',details:{name:project.name,deleted_at:new Date().toISOString()}});currentId=store.list()[0]?.id||'';render()});
   $('taskForm').addEventListener('submit',event=>{event.preventDefault();if(!currentId)return;store.addTask(currentId,{title:$('taskTitle').value,dueDate:$('taskDate').value,dueTime:$('taskTime').value,priority:$('taskPriority').value});$('taskTitle').value='';$('taskTime').value='';render();showTab('schedule');toast('Task added')});
   $('exportBtn').addEventListener('click',async()=>{try{const text=await store.exportAll(),blob=new Blob([text],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='AC_Project_Backup_'+store.today()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}catch(error){alert(error.message||'Backup could not be created.')}});
   $('importBtn').addEventListener('click',()=>$('importFile').click());
@@ -60,7 +60,7 @@
   }
   async function recordAction(projectId,recordId,action){
     const project=store.get(projectId),record=project?.records?.find(item=>item.id===recordId);if(!record)return;
-    if(action==='delete'){if(confirm('Delete this saved record?')){await store.deleteRecord(projectId,recordId);render()}return}
+    if(action==='delete'){if(confirm('Delete this saved record?')){await store.deleteRecord(projectId,recordId);await window.ACAuth?.audit?.('project_record_deleted',{projectId,recordId,module:record.module,details:{title:record.title||'',deleted_at:new Date().toISOString()}});render()}return}
     if(action==='file'){const file=await store.getAttachment(record.attachmentId);if(!file)return alert('The attachment is no longer available on this device.');const url=URL.createObjectURL(file.blob),a=document.createElement('a');a.href=url;a.download=file.name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);return}
     openRecord(project,record);
   }

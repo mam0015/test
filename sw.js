@@ -1,4 +1,4 @@
-const CACHE='ac-product-foundation-v9';
+const CACHE='ac-security-audit-v10';
 const ASSETS=[
   './','./index.html','./offline.html','./manifest.webmanifest',
   './assets/alert-construction-logo-white.svg','./assets/app-icon.svg',
